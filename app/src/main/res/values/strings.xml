@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">SmartSudoku</string>
+    <string name="default_web_client_id">smart-sudoku-98514</string>
 </resources>
