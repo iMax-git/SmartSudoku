@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "120116366435",
+    "project_id": "smart-sudoku-98514",
+    "storage_bucket": "smart-sudoku-98514.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:120116366435:android:8fe394fe26fc36705dfc56",
+        "android_client_info": {
+          "package_name": "com.backtracking.smartsudoku"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATbFzWCHfsVjzctzC0s6j6QvyJW4LO9e0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
