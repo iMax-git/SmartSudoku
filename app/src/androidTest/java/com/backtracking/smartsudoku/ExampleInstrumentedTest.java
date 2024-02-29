@@ -1,4 +1,4 @@
-package com.example.smartsudoku;
+package com.backtracking.smartsudoku;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.example.smartsudoku", appContext.getPackageName());
+        assertEquals("com.backtracking.smartsudoku", appContext.getPackageName());
     }
 }

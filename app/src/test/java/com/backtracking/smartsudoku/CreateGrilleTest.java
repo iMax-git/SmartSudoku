@@ -1,4 +1,4 @@
-package com.example.smartsudoku;
+package com.backtracking.smartsudoku;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
@@ -7,7 +7,7 @@ import org.junit.runners.MethodSorters;
 
 import static org.junit.Assert.*;
 
-import com.example.smartsudoku.models.Grille;
+import com.backtracking.smartsudoku.models.Grille;
 
 /**
  * Example local unit test, which will execute on the development machine (host).

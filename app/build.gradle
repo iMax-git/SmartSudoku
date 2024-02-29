@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.smartsudoku'
+    namespace 'com.backtracking.smartsudoku'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.smartsudoku"
+        applicationId "com.backtracking.smartsudoku"
         minSdk 29
         targetSdk 34
         versionCode 1

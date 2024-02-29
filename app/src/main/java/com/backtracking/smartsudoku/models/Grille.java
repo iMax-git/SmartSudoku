@@ -1,4 +1,4 @@
-package com.example.smartsudoku.models;
+package com.backtracking.smartsudoku.models;
 
 import androidx.annotation.NonNull;
 

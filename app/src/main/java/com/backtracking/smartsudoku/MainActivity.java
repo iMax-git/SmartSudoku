@@ -1,4 +1,4 @@
-package com.example.smartsudoku;
+package com.backtracking.smartsudoku;
 
 import androidx.appcompat.app.AppCompatActivity;
 
