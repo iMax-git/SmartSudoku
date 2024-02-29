@@ -40,13 +40,33 @@ public class Grid {
 
     public int[] getRegion(int regionIndex) {
         int[] region = new int[9];
-        final int x = regionIndex%3*3;
-        final int y = regionIndex/3*3;
+        final int rx = regionIndex%3*3;
+        final int ry = regionIndex/3*3;
         for (int i=0; i<3; ++i) {
             for (int j=0; j<3; ++j) {
-                region[j*3+i] = get(x+i, y+j);
+                region[j*3+i] = get(rx+i, ry+j);
             }
         }
         return region;
+    }
+
+    /*
+        below methods not tested yet
+    */
+
+    private int coordToIndex(int x, int y) {
+        return y*9+x;
+    }
+
+    private int[] indexToCoord(int index) {
+        return ArrayUtils.toArray(index%9, index/9);
+    }
+
+    private int coordToRegion(int x, int y) {
+        return indexToRegion(coordToIndex(x,y));
+    }
+
+    private int indexToRegion(int index) {
+        return index%3;
     }
 }
