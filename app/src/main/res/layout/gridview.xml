@@ -8,7 +8,7 @@
         android:id="@+id/gridviewDebugText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="GridView content"
+        android:text="The Grid View should be showing here :/"
         tools:layout_editor_absoluteX="145dp"
         tools:layout_editor_absoluteY="190dp" />
 

@@ -15,4 +15,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="50dp"
+        android:orientation="vertical">
+        <Button
+            android:id="@+id/btnGridLayout"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:text="GridLayoutActivity"
+        />
+        <Button
+            android:id="@+id/btnTestGridView"
+            android:layout_width="200dp"
+            android:layout_height="40dp"
+            android:text="TestGridViewActivity"
+        />
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
