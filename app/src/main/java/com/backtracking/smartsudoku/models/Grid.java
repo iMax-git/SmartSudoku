@@ -59,7 +59,7 @@ public class Grid {
     }
 
     private int[] indexToCoord(int index) {
-        return ArrayUtils.toArray(index%9, index/9);
+        return new int[]{ index%9, index/9 };
     }
 
     private int coordToRegion(int x, int y) {

@@ -4,26 +4,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GridLayoutActivity">
+    tools:context=".GridLayoutActivity"
+    android:layout_margin="24dp"
+    >
 
     <GridLayout
         android:id="@+id/gridLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:alignmentMode="alignBounds"
         android:columnCount="9"
         android:orientation="horizontal"
-        android:padding="12dp"
-        android:rowCount="9"
+        android:padding="0dp"
         android:useDefaultMargins="true"
         tools:layout_editor_absoluteX="0dp"
         tools:layout_editor_absoluteY="0dp">
 
 
         <TextView
+            android:background="@color/black"
             android:id="@+id/cell00"
             android:layout_gravity="center"
             android:text=""
+            android:width="33dp"
+            android:height="33dp"
             android:textSize="16dip" />
 
 
@@ -31,6 +35,7 @@
             android:id="@+id/cell01"
             android:layout_gravity="center"
             android:text=""
+            android:padding="0dp"
             android:textSize="16dip" />
 
 

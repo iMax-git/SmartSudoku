@@ -26,18 +26,18 @@ public class GridLayoutActivity extends AppCompatActivity {
 
         Bitmap bmp = Bitmap.createBitmap(300,300, Bitmap.Config.ARGB_8888);
 
-        GridDrawer gd = new GridDrawer(bmp);
-        gd.setNumColumns(3);
-        gd.setNumRows(3);
+        GridDrawer gd = new GridDrawer(bmp, 9, 9);
         gd.draw();
 
         GridLayout gridLayout = findViewById(R.id.gridLayout);
         gridLayout.setBackground(new BitmapDrawable(getResources(), bmp));
 
+        // TODO: remove
+        // insert some sudoku values in the model to test the display and the methods of the model
         Grid grid = new Grid();
         for (int i=0; i<9; ++i) {
             for (int j=0; j<9; ++j) {
-                grid.set((j*9+i), j, i);
+                grid.set((j*9+i), i, j);
             }
         }
 
@@ -50,6 +50,11 @@ public class GridLayoutActivity extends AppCompatActivity {
             }
         }
 
+        // TODO: remove
+        //
+        // testing Grid model methods.
+        // See output in the Logcat tab to check the numbers.
+        //
         final int[] row3 = grid.getRow(3);
         final int[] col4 = grid.getColumn(4);
         final int[] reg0 = grid.getRegion(0);

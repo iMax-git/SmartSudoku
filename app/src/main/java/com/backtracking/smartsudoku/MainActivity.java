@@ -18,7 +18,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        GridView pixelGrid = new GridView(this);
 //        pixelGrid.setNumColumns(4);
-//        pixelGrid.setNumRows(6);
+//        pixelGrid.setRowCount(6);
 //        setContentView(pixelGrid);
     }
 }

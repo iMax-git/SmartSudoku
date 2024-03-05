@@ -1,41 +1,52 @@
 package com.backtracking.smartsudoku;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
 
 public class GridDrawer {
-    private int numColumns, numRows;
-    private int cellWidth, cellHeight;
-    private Paint blackPaint = new Paint();
+    private int columnCount, rowCount;
+    private int cellSize;
+    private Paint painter = new Paint();
     private Bitmap bmp;
     private Canvas canvas;
-    private boolean[][] cellChecked;
 
+    /**
+     * @param bmp the size of the provided bitmap is the effective size of the grid in pixels
+     */
     public GridDrawer(Bitmap bmp) {
         this.bmp = bmp;
         this.canvas = new Canvas(this.bmp);
-//        canvas.drawColor(0xff0000);
-        blackPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        this.painter.setStyle(Paint.Style.FILL_AND_STROKE);
     }
 
-    public void setNumColumns(int numColumns) {
-        this.numColumns = numColumns;
+    /**
+     *
+     * @param bmp the size of the provided bitmap is the effective size of the grid in pixels
+     * @param columnCount number of columns
+     * @param rowCount number of rows
+     */
+    public GridDrawer(Bitmap bmp, int columnCount, int rowCount) {
+        this(bmp);
+        this.columnCount = columnCount;
+        this.rowCount = rowCount;
+        this.calculateDimensions();
+    }
+
+    public void setColumnCount(int columnCount) {
+        this.columnCount = columnCount;
         calculateDimensions();
     }
 
-    public void setNumRows(int numRows) {
-        this.numRows = numRows;
+    public void setRowCount(int rowCount) {
+        this.rowCount = rowCount;
         calculateDimensions();
     }
 
-    public int getNumColumns() { return numColumns; }
+    public int getColumnCount() { return this.columnCount; }
 
-    public int getNumRows() { return numRows; }
+    public int getRowCount() { return this.rowCount; }
 
     public int getWidth() {
         return this.bmp.getWidth();
@@ -46,43 +57,73 @@ public class GridDrawer {
     }
 
     private void calculateDimensions() {
-        if (numColumns < 1 || numRows < 1) {
+        if (columnCount < 1 || rowCount < 1) {
             return;
         }
-
-        cellWidth = getWidth() / numColumns;
-        cellHeight = getHeight() / numRows;
-
-        cellChecked = new boolean[numColumns][numRows];
+        cellSize = getWidth() / columnCount;
     }
 
     public void draw() {
         this.canvas.drawColor(Color.WHITE);
 
-        if (numColumns == 0 || numRows == 0) {
+        if (columnCount == 0 || rowCount == 0) {
             return;
         }
 
-        int width = getWidth();
-        int height = getHeight();
+        final float cellBoderWidth = 1.f;
+        final float gridBorderWidth = 2.f;
 
-        for (int i = 0; i < numColumns; i++) {
-            for (int j = 0; j < numRows; j++) {
-                if (cellChecked[i][j]) {
+        /*
+         * draw cells
+         */
+        final int width = getWidth();
+        final int height = getHeight();
+        this.painter.setStrokeWidth(cellBoderWidth);
 
-                    this.canvas.drawRect(i * cellWidth, j * cellHeight,
-                            (i + 1) * cellWidth, (j + 1) * cellHeight,
-                            blackPaint);
-                }
-            }
+        for (int i=1; i < columnCount; ++i) {
+            this.canvas.drawLine(
+                    i * cellSize + gridBorderWidth,
+                    gridBorderWidth,
+                    i * cellSize + gridBorderWidth,
+                    height + gridBorderWidth,
+                    painter
+            );
         }
 
-        for (int i = 1; i < numColumns; i++) {
-            this.canvas.drawLine(i * cellWidth, 0, i * cellWidth, height, blackPaint);
+        for (int i=1; i < rowCount; ++i) {
+            this.canvas.drawLine(
+                    gridBorderWidth,
+                    i * cellSize + gridBorderWidth,
+                    width + gridBorderWidth,
+                    i * cellSize + gridBorderWidth,
+                    painter
+            );
         }
 
-        for (int i = 1; i < numRows; i++) {
-            this.canvas.drawLine(0, i * cellHeight, width, i * cellHeight, blackPaint);
+        /*
+         * outline regions
+         */
+        final int regionWidth = 3* cellSize;
+        final int regionHeight = 3*cellSize;
+        this.painter.setStrokeWidth(gridBorderWidth);
+
+        for (int i=0; i <= columnCount/3; ++i) {
+            this.canvas.drawLine(
+                    i * regionWidth + gridBorderWidth,
+                    gridBorderWidth,
+                    i * regionWidth + gridBorderWidth,
+                    height,
+                    painter
+            );
+        }
+        for (int i=0; i <= rowCount/3; ++i) {
+            this.canvas.drawLine(
+                    gridBorderWidth,
+                    i * regionHeight + gridBorderWidth,
+                    width,
+                    i * regionHeight + gridBorderWidth,
+                    painter
+            );
         }
     }
 }
