@@ -13,12 +13,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
-        Intent intent = new Intent(this, GridLayoutActivity.class);
+        Intent intent = new Intent(this, TestGridViewActivity.class);
         startActivity(intent);
-
-//        GridView pixelGrid = new GridView(this);
-//        pixelGrid.setNumColumns(4);
-//        pixelGrid.setRowCount(6);
-//        setContentView(pixelGrid);
     }
 }
