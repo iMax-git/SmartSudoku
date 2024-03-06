@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.backtracking.smartsudoku.models.Grid;
+import com.backtracking.smartsudoku.models.SudokuGenerator;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,13 +41,9 @@ public class GridLayoutActivity extends AppCompatActivity {
         // TODO: remove this code
         // insert some sudoku values in the model to test the display and the methods of the model
         // Created before the view for lambda onClickListener
-        this.grid = new Grid();
-        for (int i = 0; i < 9; ++i) {
-            for (int j = 0; j < 9; ++j) {
-                grid.set((j * 9 + i), i, j);
-            }
-        }
-
+        SudokuGenerator generator = new SudokuGenerator();
+        generator.removeNumbers(20); // Ajustez le nombre d'essais pour augmenter ou diminuer la difficulté
+        this.grid = generator.getGrid();
 
         for (int i = 0; i < 81 ; ++i) {
             TextView tv = new TextView(this);
