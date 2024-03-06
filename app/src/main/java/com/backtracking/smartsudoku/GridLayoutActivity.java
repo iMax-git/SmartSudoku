@@ -41,9 +41,8 @@ public class GridLayoutActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         int[] screenSize = getScreenSize();
-        screenSize[0] = screenSize[0] % 2 == 0 ? screenSize[0] : screenSize[0] + 1;
         //SIZE = getScreenSize()[0] - (getScreenSize()[0] / 8); // TODO: Trouver une meilleure façon de calculer la taille de la grille
-        SIZE = (int)(screenSize[0]*0.8);
+        SIZE = screenSize[0]-100;
         setContentView(R.layout.activity_grid_layout);
         this.view = findViewById(R.id.gridLayout);
         this.ll_number_list = findViewById(R.id.ll_number_list);
