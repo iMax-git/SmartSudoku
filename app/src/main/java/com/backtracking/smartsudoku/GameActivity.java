@@ -98,7 +98,7 @@ public class GameActivity extends AppCompatActivity {
         for (int i = 0; i < 81 ; ++i) {
             TextView tv = new TextView(this);
             tv.setId(i);
-            tv.setText("X");
+            tv.setText(" ");
             tv.setTextSize(20);
             tv.setGravity(1);
             if (DEBUG_CELL) {
@@ -233,9 +233,11 @@ public class GameActivity extends AppCompatActivity {
         for (int i = 0; i < 9; ++i) {
             for (int j = 0; j < 9; ++j) {
                 TextView tv = this.cells.get(i * 9 + j);
+                int nb = grid.get(j, i);
+                if(nb!=0) {
+                    tv.setText(String.valueOf(nb));
+                }
 
-                tv.setText(String.valueOf(grid.get(j, i)));
-                //++id;
             }
         }
 
