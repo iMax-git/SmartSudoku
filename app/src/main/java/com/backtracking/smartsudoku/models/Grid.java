@@ -56,23 +56,20 @@ public class Grid {
         below methods not tested yet
     */
 
-    private int coordToIndex(int x, int y) {
+    static public int coordToIndex(int x, int y) {
         return y*9+x;
     }
 
-    private int[] indexToCoord(int index) {
-        return new int[]{ index%9, index/9 };
-    }
+    static public int indexToX(int index) { return index%9; }
 
-    private int coordToRegion(int x, int y) {
+    static public int indexToY(int index) { return index/9; }
+
+    static public int coordToRegion(int x, int y) {
         return indexToRegion(coordToIndex(x,y));
     }
 
-    private int indexToRegion(int index) {
+    static public int indexToRegion(int index) {
         return index%3;
     }
-
-
-
-
+    
 }
