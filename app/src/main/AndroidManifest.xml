@@ -18,10 +18,10 @@
             android:name=".TestGridViewActivity"
             android:exported="false" />
         <activity
-            android:name=".GridLayoutActivity"
+            android:name=".GameActivity"
             android:exported="false" />
         <activity
-            android:name=".GameActivity"
+            android:name=".GameActivityAA"
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
