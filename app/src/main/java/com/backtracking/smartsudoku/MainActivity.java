@@ -24,5 +24,11 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, TestGridViewActivity.class);
             startActivity(intent);
         });
+
+        Button btnGameActivity = findViewById(R.id.btnGameActivity);
+        btnTestGridView.setOnClickListener(v -> {
+            Intent intent = new Intent(this, GameActivity.class);
+            startActivity(intent);
+        });
     }
 }

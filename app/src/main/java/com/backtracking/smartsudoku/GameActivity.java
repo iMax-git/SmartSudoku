@@ -4,8 +4,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 
+import java.time.Clock;
+import java.time.LocalDate;
+
 
 public class GameActivity extends AppCompatActivity {
+
+    Clock clock;
+
+    public GameActivity() {
+        this.clock = Clock.systemDefaultZone();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
