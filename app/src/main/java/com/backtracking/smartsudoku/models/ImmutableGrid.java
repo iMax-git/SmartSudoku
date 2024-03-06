@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Grid class
+ * ImmutableGrid class
  * Simple model for holding a Sudoku game grid data.
  */
 public class ImmutableGrid {

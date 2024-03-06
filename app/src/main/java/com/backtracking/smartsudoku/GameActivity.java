@@ -39,8 +39,7 @@ public class GameActivity extends AppCompatActivity {
 
     private static final Clock clock = Clock.systemDefaultZone();
 
-    GridLayout view;
-//    ImmutableGrid grid;
+    GridLayout gridView;
 
     LinearLayout ll_number_list;
 
@@ -66,7 +65,7 @@ public class GameActivity extends AppCompatActivity {
         //SIZE = getScreenSize()[0] - (getScreenSize()[0] / 8); // TODO: Trouver une meilleure façon de calculer la taille de la grille
         SIZE = screenSize[0]-100;
         setContentView(R.layout.activity_game);
-        this.view = findViewById(R.id.gridLayout);
+        this.gridView = findViewById(R.id.gridLayout);
         this.ll_number_list = findViewById(R.id.ll_number_list);
         this.btnRedo = findViewById(R.id.btnRedo);
         this.btnUndo = findViewById(R.id.btnUndo);
@@ -74,7 +73,7 @@ public class GameActivity extends AppCompatActivity {
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = SIZE;
         params.height = SIZE;
-        this.view.setLayoutParams(params);
+        this.gridView.setLayoutParams(params);
 
         this.stateStack = new Stack<>();
         this.redoStateStack = new Stack<>();
@@ -83,7 +82,6 @@ public class GameActivity extends AppCompatActivity {
         this.difficulty = Difficulty.fromInt(this.settings.getInt("difficulty", Difficulty.MEDIUM.ordinal()));
 
 
-        // TODO: remove this code
         startNewGame(this.difficulty);
 
 
@@ -138,9 +136,7 @@ public class GameActivity extends AppCompatActivity {
                 builder.setPositiveButton("Valider", (dialog, which) -> {
                     String value = et_form.getText().toString();
                     if (value.matches("[1-9]")) {
-                        this.replaceNumber(x, y, Integer.parseInt(value)); // INFO: Save the value in the model (To avoid to be lost when the view is redrawn)
-                        tv.setText(value);
-
+                        this.replaceNumber(x, y, Integer.parseInt(value)); // INFO: Save the value in the model (To avoid to be lost when the gridView is redrawn)
                     } else {
                         Toast.makeText(this, R.string.choice_number, Toast.LENGTH_SHORT).show();
                     }
@@ -153,9 +149,8 @@ public class GameActivity extends AppCompatActivity {
                 builder.show();
             });
 
-
             this.cells.add(tv);
-            this.view.addView(tv);
+            this.gridView.addView(tv);
         }
 
 
@@ -187,7 +182,6 @@ public class GameActivity extends AppCompatActivity {
                 //tv.setText(tv_number.getText());
             });
             ll_number_list.addView(tv_number);
-
         }
 
     }
@@ -202,28 +196,8 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
-        // insert the numbers on the view
-        // TODO: use the ViewGroup API of GridLayout to iterate through cell views,
-        //       don't use this hacky increment on a view id.
-
-        //int id = R.id.cell0;
-        for (int i = 0; i < 9; ++i) {
-            for (int j = 0; j < 9; ++j) {
-                TextView tv = this.cells.get(i * 9 + j);
-                int nb = this.getGrid().get(j, i);
-                if(nb!=0) {
-                    tv.setText(String.valueOf(nb));
-                }
-
-            }
-        }
-
-        // TODO: strangely this.view.getWidth() returns 0 at this point in time.
-        //       Find a way to compute or pass the desired size for the grid,
-        //       or find where to call view.getWidth after its size is known.
-        // assume the view is square sized!
-        this.drawBackground(SIZE);
+        drawGrid();
+        drawBackground(SIZE);
     }
 
 
@@ -233,6 +207,22 @@ public class GameActivity extends AppCompatActivity {
         SharedPreferences.Editor settingsEditor = this.settings.edit();
         settingsEditor.putInt("difficulty", difficulty.ordinal());
         settingsEditor.apply();
+    }
+
+
+    protected void drawGrid() {
+        ImmutableGrid grid = getGrid();
+        for (int i = 0; i < 9; ++i) {
+            for (int j = 0; j < 9; ++j) {
+                TextView tv = this.cells.get(i * 9 + j);
+                int nb = grid.get(j, i);
+                if (nb != 0) {
+                    tv.setText(String.valueOf(nb));
+                } else {
+                    tv.setText("");
+                }
+            }
+        }
     }
 
 
@@ -310,7 +300,7 @@ public class GameActivity extends AppCompatActivity {
             );
         }
 
-        this.view.setBackground(new BitmapDrawable(getResources(), bmp));
+        this.gridView.setBackground(new BitmapDrawable(getResources(), bmp));
     }
 
     /**
@@ -350,7 +340,7 @@ public class GameActivity extends AppCompatActivity {
     public void replaceNumber(int x, int y, int value) {
         stateStack.push(this.stateStack.peek().set(x, y, value));
         btnUndo.setEnabled(true);
-        view.invalidate();
+        drawGrid();
     }
 
 
@@ -358,24 +348,20 @@ public class GameActivity extends AppCompatActivity {
         redoStateStack.push(this.stateStack.pop());
         btnRedo.setEnabled(true);
         btnUndo.setEnabled(this.stateStack.size()>1);
-        view.invalidate();
+        drawGrid();
     }
+
 
     public void redo(View v) {
         stateStack.push(this.redoStateStack.pop());
         btnUndo.setEnabled(true);
         btnRedo.setEnabled(!redoStateStack.isEmpty());
-        view.invalidate();
+        drawGrid();
     }
 
 
     public ImmutableGrid getGrid() {
         return this.stateStack.peek();
-    }
-
-
-    protected void drawGrid() {
-
     }
 
 }
