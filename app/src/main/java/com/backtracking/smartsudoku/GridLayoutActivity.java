@@ -119,20 +119,20 @@ public class GridLayoutActivity extends AppCompatActivity {
         // See output in the Logcat tab to check the numbers.
         final List<Integer> row3 = grid.getRow(3);
         final List<Integer> col4 = grid.getColumn(4);
-        final int[] reg0 = grid.getRegion(0);
-        final int[] reg8 = grid.getRegion(8);
+        final List<Integer> reg0 = grid.getRegion(0);
+        final List<Integer> reg8 = grid.getRegion(8);
 
         System.out.println("row3");
-        Arrays.stream(row3).asLongStream().forEach(c -> System.out.printf("%d ", c));
+        row3.forEach(c -> System.out.printf("%d ", c));
 
         System.out.println("\ncol4");
-        Arrays.stream(col4).asLongStream().forEach(c -> System.out.printf("%d ", c));
+        col4.forEach(c -> System.out.printf("%d ", c));
 
         System.out.println("\nreg0");
-        Arrays.stream(reg0).asLongStream().forEach(c -> System.out.printf("%d ", c));
+        reg0.forEach(c -> System.out.printf("%d ", c));
 
         System.out.println("\nreg8");
-        Arrays.stream(reg8).asLongStream().forEach(c -> System.out.printf("%d ", c));
+        reg8.forEach(c -> System.out.printf("%d ", c));
 
         System.out.flush();
     }
