@@ -5,11 +5,21 @@ import java.util.Collections;
 import java.util.List;
 
 public class SudokuGenerator {
-    private Grid grid;
+//    private ImmutableGrid grid;
+    byte[] cells;
     private int solutionCount;
     public SudokuGenerator() {
-        grid = new Grid();
+//        grid = new ImmutableGrid();
+        cells = new byte[81];
         fillGrid();
+    }
+
+    private void setCell(int x, int y, int value) {
+        this.cells[y*9+x] = (byte)value;
+    }
+
+    private int getCell(int x, int y) {
+        return this.cells[y*9+x];
     }
 
     private boolean fillGrid() {
@@ -27,11 +37,13 @@ public class SudokuGenerator {
         List<Integer> numbers = shuffledNumbers();
         for (int num : numbers) {
             if (isValidPlacement(x, y, num)) {
-                grid.set(num, x, y);
+                //grid.set(num, x, y);
+                setCell(x, y, num);
                 if (fillCell(index + 1)) {
                     return true;
                 }
-                grid.set(0, x, y); // Réinitialiser si le placement ne mène pas à une solution complète
+                //grid.set(0, x, y); // Réinitialiser si le placement ne mène pas à une solution complète
+                setCell(x, y, 0);
             }
         }
 
@@ -41,7 +53,8 @@ public class SudokuGenerator {
     private boolean isValidPlacement(int x, int y, int value) {
         // Vérifie la ligne
         for (int i = 0; i < 9; i++) {
-            if (value == grid.get(x, i) || value == grid.get(i, y)) {
+//            if (value == grid.get(x, i) || value == grid.get(i, y)) {
+            if (value == getCell(x, i) || value == getCell(i, y)) {
                 return false;
             }
         }
@@ -51,7 +64,7 @@ public class SudokuGenerator {
         int startY = (y / 3) * 3;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (value == grid.get(startX + i, startY + j)) {
+                if (value == getCell(startX + i, startY + j)) {
                     return false;
                 }
             }
@@ -83,15 +96,18 @@ public class SudokuGenerator {
 
             int x = position % 9;
             int y = position / 9;
-            int backup = grid.get(x, y);
+//            int backup = grid.get(x, y);
+            int backup = getCell(x, y);
 
             if (backup != 0) {
-                grid.set(0, x, y); // Essayez de retirer le nombre.
+//                grid.set(0, x, y); // Essayez de retirer le nombre.
+                setCell(x, y, 0);
 
                 if (isSolvableWithUniqueSolution()) {
                     removedCount++; // Suppression réussie, continuez.
                 } else {
-                    grid.set(backup, x, y); // La suppression a échoué, restaurez le nombre.
+//                    grid.set(backup, x, y); // La suppression a échoué, restaurez le nombre.
+                    setCell(x, y, backup);
                 }
             }
         }
@@ -112,17 +128,21 @@ public class SudokuGenerator {
         int x = index % 9;
         int y = index / 9;
 
-        if (grid.get(x, y) != 0) { // Si la cellule est déjà remplie, passez à la suivante.
+//        if (grid.get(x, y) != 0) { // Si la cellule est déjà remplie, passez à la suivante.
+        if (getCell(x, y) != 0) { // Si la cellule est déjà remplie, passez à la suivante.
             return solve(index + 1);
         } else {
             for (int num = 1; num <= 9; num++) {
                 if (isValidPlacement(x, y, num)) {
-                    grid.set(num, x, y);
+//                    grid.set(num, x, y);
+                    setCell(x, y, num);
                     if (!solve(index + 1)) {
-                        grid.set(0, x, y); // Réinitialisez si la solution actuelle mène à plus d'une solution ou si elle échoue.
+//                        grid.set(0, x, y); // Réinitialisez si la solution actuelle mène à plus d'une solution ou si elle échoue.
+                        setCell(x, y, 0); // Réinitialisez si la solution actuelle mène à plus d'une solution ou si elle échoue.
                         return false; // Sortie anticipée si plus d'une solution est trouvée.
                     }
-                    grid.set(0, x, y); // Réinitialisez après avoir vérifié cette branche.
+//                    grid.set(0, x, y); // Réinitialisez après avoir vérifié cette branche.
+                    setCell(x, y, 0); // Réinitialisez après avoir vérifié cette branche.
                 }
             }
         }
@@ -135,8 +155,8 @@ public class SudokuGenerator {
         return solutionCount < 2;
     }
 
-    public Grid getGrid() {
-        return grid;
+    public ImmutableGrid getGrid() {
+        return new ImmutableGrid(this.cells);
     }
 
 

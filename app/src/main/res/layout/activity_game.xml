@@ -47,4 +47,27 @@
         tools:ignore="MissingConstraints">
     </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="200dp"
+        android:layout_height="50dp">
+
+        <Button
+            android:id="@+id/btnUndo"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:text="undo"
+            android:onClick="undo"
+            android:enabled="false"
+            />
+
+        <Button
+            android:id="@+id/btnRedo"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:text="redo"
+            android:onClick="redo"
+            android:enabled="false"
+            />
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

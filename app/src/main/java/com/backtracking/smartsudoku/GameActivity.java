@@ -11,13 +11,15 @@ import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.backtracking.smartsudoku.models.Grid;
+import com.backtracking.smartsudoku.models.ImmutableGrid;
 import com.backtracking.smartsudoku.models.SudokuGenerator;
 
 import java.time.Clock;
@@ -38,9 +40,11 @@ public class GameActivity extends AppCompatActivity {
     private static final Clock clock = Clock.systemDefaultZone();
 
     GridLayout view;
-    Grid grid;
+//    ImmutableGrid grid;
 
     LinearLayout ll_number_list;
+
+    Button btnUndo, btnRedo;
 
     boolean DEBUG_CELL = false;
 
@@ -48,8 +52,8 @@ public class GameActivity extends AppCompatActivity {
 
     Integer SIZE;
 
-    Stack<Grid> stateStack;
-    Stack<Grid> redoStateStack;
+    Stack<ImmutableGrid> stateStack;
+    Stack<ImmutableGrid> redoStateStack;
     LocalDateTime timer;
     Difficulty difficulty;
 
@@ -64,6 +68,8 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
         this.view = findViewById(R.id.gridLayout);
         this.ll_number_list = findViewById(R.id.ll_number_list);
+        this.btnRedo = findViewById(R.id.btnRedo);
+        this.btnUndo = findViewById(R.id.btnUndo);
 
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
         params.width = SIZE;
@@ -78,22 +84,9 @@ public class GameActivity extends AppCompatActivity {
 
 
         // TODO: remove this code
-        // insert some sudoku values in the model to test the display and the methods of the model
-        // Created before the view for lambda onClickListener
-        SudokuGenerator generator = new SudokuGenerator();
+        startNewGame(this.difficulty);
 
-        switch (this.difficulty){
-            case EASY:
-                generator.removeNumbers(18);
-                break;
-            case MEDIUM:
-                generator.removeNumbers(37);
-                break;
-            case HARD:
-                generator.removeNumbers(56);
-                break;
-        }
-        this.grid = generator.getGrid();
+
         for (int i = 0; i < 81 ; ++i) {
             TextView tv = new TextView(this);
             tv.setId(i);
@@ -126,7 +119,7 @@ public class GameActivity extends AppCompatActivity {
                 // Show a dialog to enter a number
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Modifier la case");
-                builder.setMessage("Entrez un chiffre entre 1 et 9 \n Numéro de la case : " + grid.get(x,y) + ".");
+                builder.setMessage("Entrez un chiffre entre 1 et 9 \n Numéro de la case : " + getGrid().get(x,y) + ".");
 
                 // Create Layout for the form
                 LinearLayout ll_form = new LinearLayout(this);
@@ -145,7 +138,7 @@ public class GameActivity extends AppCompatActivity {
                 builder.setPositiveButton("Valider", (dialog, which) -> {
                     String value = et_form.getText().toString();
                     if (value.matches("[1-9]")) {
-                        grid.set(Integer.parseInt(value), x,y); // INFO: Save the value in the model (To avoid to be lost when the view is redrawn)
+                        this.replaceNumber(x, y, Integer.parseInt(value)); // INFO: Save the value in the model (To avoid to be lost when the view is redrawn)
                         tv.setText(value);
 
                     } else {
@@ -218,7 +211,7 @@ public class GameActivity extends AppCompatActivity {
         for (int i = 0; i < 9; ++i) {
             for (int j = 0; j < 9; ++j) {
                 TextView tv = this.cells.get(i * 9 + j);
-                int nb = grid.get(j, i);
+                int nb = this.getGrid().get(j, i);
                 if(nb!=0) {
                     tv.setText(String.valueOf(nb));
                 }
@@ -332,10 +325,57 @@ public class GameActivity extends AppCompatActivity {
 
 
     public void startNewGame(final Difficulty difficulty) {
-        this.stateStack.clear();
-        this.redoStateStack.clear();
-        this.timer = LocalDateTime.now();
         this.difficulty = difficulty;
+        this.redoStateStack.clear();
+        this.stateStack.clear();
+
+        SudokuGenerator generator = new SudokuGenerator();
+        switch (this.difficulty){
+            case EASY:
+                generator.removeNumbers(18);
+                break;
+            case MEDIUM:
+                generator.removeNumbers(37);
+                break;
+            case HARD:
+                generator.removeNumbers(56);
+                break;
+        }
+        this.stateStack.push(generator.getGrid());
+
+        this.timer = LocalDateTime.now();
+    }
+
+
+    public void replaceNumber(int x, int y, int value) {
+        stateStack.push(this.stateStack.peek().set(x, y, value));
+        btnUndo.setEnabled(true);
+        view.invalidate();
+    }
+
+
+    public void undo(View v) {
+        redoStateStack.push(this.stateStack.pop());
+        btnRedo.setEnabled(true);
+        btnUndo.setEnabled(this.stateStack.size()>1);
+        view.invalidate();
+    }
+
+    public void redo(View v) {
+        stateStack.push(this.redoStateStack.pop());
+        btnUndo.setEnabled(true);
+        btnRedo.setEnabled(!redoStateStack.isEmpty());
+        view.invalidate();
+    }
+
+
+    public ImmutableGrid getGrid() {
+        return this.stateStack.peek();
+    }
+
+
+    protected void drawGrid() {
+
     }
 
 }

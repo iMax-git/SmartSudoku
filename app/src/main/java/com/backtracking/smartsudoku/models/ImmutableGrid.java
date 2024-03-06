@@ -8,27 +8,25 @@ import java.util.List;
  * Grid class
  * Simple model for holding a Sudoku game grid data.
  */
-public class Grid {
+public class ImmutableGrid {
     private final byte[] cells = new byte[81];
 
-    public Grid() {
+    public ImmutableGrid() {
         Arrays.fill(this.cells, (byte)0);
+    }
+
+    protected ImmutableGrid(byte[] cells) {
+        System.arraycopy(cells, 0, this.cells, 0, this.cells.length);
     }
 
     public int get(int x, int y) {
         return this.cells[y*9+x];
     }
 
-    public void set(int x, int y, int value) {
-        this.cells[y*9+x] = (byte)value;
-    }
-
-    public List<Integer> getColumn(int colIndex) {
-        List<Integer> column = new ArrayList<>();
-        for (int i=0; i<9; ++i) {
-            column.add((int)this.cells[i*9 + colIndex]);
-        }
-        return column;
+    public ImmutableGrid set(int x, int y, int value) {
+        ImmutableGrid grid = new ImmutableGrid(cells);
+        grid.cells[y*9+x] = (byte)value;
+        return grid;
     }
 
     public List<Integer> getRow(int rowIndex) {
@@ -37,6 +35,14 @@ public class Grid {
             row.add((int)this.cells[rowIndex*9 + i]);
         }
         return row;
+    }
+
+    public List<Integer> getColumn(int colIndex) {
+        List<Integer> column = new ArrayList<>();
+        for (int i=0; i<9; ++i) {
+            column.add((int)this.cells[i*9 + colIndex]);
+        }
+        return column;
     }
 
     public List<Integer> getRegion(int regionIndex) {
