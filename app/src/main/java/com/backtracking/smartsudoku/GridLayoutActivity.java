@@ -30,7 +30,7 @@ public class GridLayoutActivity extends AppCompatActivity {
 
     LinearLayout ll_number_list;
 
-    boolean DEBUG_CELL = true;
+    boolean DEBUG_CELL = false;
 
     List<TextView> cells = new ArrayList<>();
 
@@ -40,8 +40,10 @@ public class GridLayoutActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SIZE = getScreenSize()[0] - 100;
-
+        int[] screenSize = getScreenSize();
+        screenSize[0] = screenSize[0] % 2 == 0 ? screenSize[0] : screenSize[0] + 1;
+        //SIZE = getScreenSize()[0] - (getScreenSize()[0] / 8); // TODO: Trouver une meilleure façon de calculer la taille de la grille
+        SIZE = (int)(screenSize[0]*0.8);
         setContentView(R.layout.activity_grid_layout);
         this.view = findViewById(R.id.gridLayout);
         this.ll_number_list = findViewById(R.id.ll_number_list);
@@ -70,13 +72,14 @@ public class GridLayoutActivity extends AppCompatActivity {
                 tv.setBackgroundColor(Color.BLACK);
             } else {
                 tv.setTextColor(Color.BLACK);
-                tv.setBackgroundColor(Color.WHITE);
+                tv.setBackgroundColor(Color.TRANSPARENT);
             }
-            tv.setWidth(((SIZE - 3*2) / 9)-7);
-            tv.setHeight(((SIZE -3*2) / 9)-7);
+            int step = (SIZE / 9);
+            tv.setWidth(step);
+            tv.setHeight(step);
             tv.setPadding(0, 0, 0, 0);
             GridLayout.LayoutParams params1 = new GridLayout.LayoutParams();
-            params1.setMargins(6, 6, 1, 1);
+            params1.setMargins(0, 0, 0, 0);
             tv.setLayoutParams(params1);
 
             tv.setOnClickListener(v -> {
