@@ -4,7 +4,6 @@ import java.util.Arrays;
 
 /**
  * Grid class
- *
  * Simple model for holding a Sudoku game grid data.
  */
 public class Grid {
@@ -15,7 +14,8 @@ public class Grid {
     }
 
     public int get(int x, int y) {
-        return (int)this.cells[y*9+x];
+        // return (int)this.cells[y*9+x]; // Cast considered redundant
+        return this.cells[y*9+x];
     }
 
     public void set(int value, int x, int y) {

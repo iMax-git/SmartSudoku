@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">SmartSudoku</string>
     <string name="default_web_client_id">smart-sudoku-98514</string>
+    <string name="chiffre">"Chiffre : "</string>
+    <string name="annuler">Annuler</string>
+    <string name="choice_number">Veuillez entrer un chiffre entre 1 et 9</string>
 </resources>
