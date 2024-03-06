@@ -72,11 +72,11 @@ public class GridLayoutActivity extends AppCompatActivity {
                 tv.setTextColor(Color.BLACK);
                 tv.setBackgroundColor(Color.WHITE);
             }
-            tv.setWidth(((SIZE - 3*2) / 9)-4);
-            tv.setHeight(((SIZE -3*2) / 9)-4);
+            tv.setWidth(((SIZE - 3*2) / 9)-7);
+            tv.setHeight(((SIZE -3*2) / 9)-7);
             tv.setPadding(0, 0, 0, 0);
             GridLayout.LayoutParams params1 = new GridLayout.LayoutParams();
-            params1.setMargins(3, 3, 1, 1);
+            params1.setMargins(6, 6, 1, 1);
             tv.setLayoutParams(params1);
 
             tv.setOnClickListener(v -> {
