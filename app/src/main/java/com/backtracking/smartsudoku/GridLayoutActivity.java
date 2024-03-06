@@ -2,23 +2,33 @@ package com.backtracking.smartsudoku;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.widget.EditText;
 import android.widget.GridLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.backtracking.smartsudoku.models.Grid;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class GridLayoutActivity extends AppCompatActivity {
 
     GridLayout view;
     Grid grid;
+
+    boolean DEBUG_CELL = false;
+
+    List<TextView> cells = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,12 +39,83 @@ public class GridLayoutActivity extends AppCompatActivity {
 
         // TODO: remove this code
         // insert some sudoku values in the model to test the display and the methods of the model
+        // Created before the view for lambda onClickListener
         this.grid = new Grid();
         for (int i = 0; i < 9; ++i) {
             for (int j = 0; j < 9; ++j) {
                 grid.set((j * 9 + i), i, j);
             }
         }
+
+
+        for (int i = 0; i < 81 ; ++i) {
+            TextView tv = new TextView(this);
+            tv.setId(i);
+            tv.setText("X");
+            tv.setTextSize(20);
+            tv.setGravity(1);
+            if (DEBUG_CELL) {
+                tv.setTextColor(Color.WHITE);
+                tv.setBackgroundColor(Color.BLACK);
+            } else {
+                tv.setTextColor(Color.BLACK);
+                tv.setBackgroundColor(Color.WHITE);
+            }
+            tv.setWidth(44);
+            tv.setHeight(44);
+            tv.setPadding(0, 0, 0, 0);
+
+            tv.setOnClickListener(v -> {
+                int id = v.getId();
+                int x = id % 9;
+                int y = id / 9;
+
+                // Show a message with number of the cell clicked
+                Toast.makeText(this, "Cell " + id, Toast.LENGTH_SHORT).show();
+
+                // Show a dialog to enter a number
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Modifier la case");
+                builder.setMessage("Entrez un chiffre entre 1 et 9 \n Numéro de la case : " + grid.get(x,y) + ".");
+
+                // Create Layout for the form
+                LinearLayout ll_form = new LinearLayout(this);
+                ll_form.setOrientation(LinearLayout.VERTICAL);
+
+                // Create EditText
+                TextView tv_form = new TextView(this);
+                tv_form.setText(R.string.chiffre);
+                ll_form.addView(tv_form);
+
+                EditText et_form = new EditText(this);
+                ll_form.addView(et_form);
+
+                builder.setView(ll_form);
+
+                builder.setPositiveButton("Valider", (dialog, which) -> {
+                    String value = et_form.getText().toString();
+                    if (value.matches("[1-9]")) {
+                        grid.set(Integer.parseInt(value), x,y); // INFO: Save the value in the model (To avoid to be lost when the view is redrawn)
+                        tv.setText(value);
+
+                    } else {
+                        Toast.makeText(this, R.string.choice_number, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                builder.setNegativeButton(R.string.annuler, (dialog, which) -> {
+                    dialog.cancel();
+                });
+
+                builder.show();
+            });
+
+            this.cells.add(tv);
+            this.view.addView(tv);
+        }
+
+
+
 
         // TODO: remove this code
         // testing Grid model methods.
@@ -66,14 +147,17 @@ public class GridLayoutActivity extends AppCompatActivity {
         // insert the numbers on the view
         // TODO: use the ViewGroup API of GridLayout to iterate through cell views,
         //       don't use this hacky increment on a view id.
-        int id = R.id.cell00;
+
+        //int id = R.id.cell0;
         for (int i = 0; i < 9; ++i) {
             for (int j = 0; j < 9; ++j) {
-                TextView tv = findViewById(id);
+                TextView tv = this.cells.get(i * 9 + j);
+
                 tv.setText(String.valueOf(grid.get(j, i)));
-                ++id;
+                //++id;
             }
         }
+
 
         // TODO: strangely this.view.getWidth() returns 0 at this point in time.
         //       Find a way to compute or pass the desired size for the grid,
@@ -83,6 +167,10 @@ public class GridLayoutActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Draw the background of the grid.
+     * @param sideSize the size of the grid (in pixels ?)
+     */
     private void drawBackground(final int sideSize) {
         Bitmap bmp = Bitmap.createBitmap(sideSize,sideSize, Bitmap.Config.ARGB_8888);
 
@@ -91,8 +179,8 @@ public class GridLayoutActivity extends AppCompatActivity {
 
         canvas.drawColor(Color.WHITE);
 
-        final float cellBorderWidth = 1.f;
-        final float regBorderWidth = 2.f;
+        final float cellBorderWidth = 1.f; // BORDER WIDTH & HEIGHT OF CELL ?
+        final float regBorderWidth = 2.f; // BORDER WIDTH & HEIGHT OF GRID ?
         final float cellSize = (sideSize - 3*regBorderWidth) / 9.f;
 
         Paint painter = new Paint();
@@ -104,6 +192,7 @@ public class GridLayoutActivity extends AppCompatActivity {
         painter.setStrokeWidth(cellBorderWidth);
 
         for (int i=1; i < 9; ++i) {
+            // vertical lines
             canvas.drawLine(
                     i * cellSize + regBorderWidth,
                     regBorderWidth,
@@ -114,6 +203,7 @@ public class GridLayoutActivity extends AppCompatActivity {
         }
 
         for (int i=1; i < 9; ++i) {
+            // horizontal lines
             canvas.drawLine(
                     regBorderWidth,
                     i * cellSize + regBorderWidth,
@@ -130,6 +220,7 @@ public class GridLayoutActivity extends AppCompatActivity {
         painter.setStrokeWidth(regBorderWidth);
 
         for (int i=0; i <= 3; ++i) {
+            // vertical lines MORE LARGE
             canvas.drawLine(
                     i * regSize + regBorderWidth,
                     regBorderWidth,
@@ -140,6 +231,7 @@ public class GridLayoutActivity extends AppCompatActivity {
         }
 
         for (int i=0; i <= 3; ++i) {
+            // horizontal lines MORE LARGE
             canvas.drawLine(
                     regBorderWidth,
                     i * regSize + regBorderWidth,
