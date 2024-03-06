@@ -12,11 +12,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Button btnGridLayout = findViewById(R.id.btnGameActivity);
-        btnGridLayout.setOnClickListener(v -> {
-            Intent intent = new Intent(this, GameActivity.class);
-            startActivity(intent);
-        });
+        Intent intent = new Intent(this, GameActivity.class);
+        // TODO: check config storage for last played difficulty and put in the intent:
+        //       intent.putExtra("difficulty", value);
+        startActivity(intent);
     }
 }
