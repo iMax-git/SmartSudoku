@@ -117,8 +117,8 @@ public class GridLayoutActivity extends AppCompatActivity {
         // TODO: remove this code
         // testing Grid model methods.
         // See output in the Logcat tab to check the numbers.
-        final int[] row3 = grid.getRow(3);
-        final int[] col4 = grid.getColumn(4);
+        final List<Integer> row3 = grid.getRow(3);
+        final List<Integer> col4 = grid.getColumn(4);
         final int[] reg0 = grid.getRegion(0);
         final int[] reg8 = grid.getRegion(8);
 

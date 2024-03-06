@@ -1,6 +1,8 @@
 package com.backtracking.smartsudoku.models;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Grid class
@@ -22,29 +24,29 @@ public class Grid {
         this.cells[y*9+x] = (byte)value;
     }
 
-    public int[] getColumn(int colIndex) {
-        int[] column = new int[9];
+    public List<Integer> getColumn(int colIndex) {
+        List<Integer> column = new ArrayList<>();
         for (int i=0; i<9; ++i) {
-            column[i] = this.cells[i*9 + colIndex];
+            column.add((int)this.cells[i*9 + colIndex]);
         }
         return column;
     }
 
-    public int[] getRow(int rowIndex) {
-        int[] row = new int[9];
+    public List<Integer> getRow(int rowIndex) {
+        List<Integer> row = new ArrayList<>();
         for (int i=0; i<9; ++i) {
-            row[i] = this.cells[rowIndex*9 + i];
+            row.add((int)this.cells[rowIndex*9 + i]);
         }
         return row;
     }
 
-    public int[] getRegion(int regionIndex) {
-        int[] region = new int[9];
+    public List<Integer> getRegion(int regionIndex) {
+        List<Integer> region = new ArrayList<>();
         final int rx = regionIndex%3*3;
         final int ry = regionIndex/3*3;
         for (int i=0; i<3; ++i) {
             for (int j=0; j<3; ++j) {
-                region[j*3+i] = get(rx+i, ry+j);
+                region.add(this.get(rx+i, ry+j));
             }
         }
         return region;
