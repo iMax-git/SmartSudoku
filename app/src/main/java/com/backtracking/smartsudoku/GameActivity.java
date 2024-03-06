@@ -31,6 +31,8 @@ public class GameActivity extends AppCompatActivity {
 
     static Clock clock = Clock.systemDefaultZone();
 
+    public enum Difficulty { EASY, MEDIUM, HARD };
+
     GridLayout view;
     Grid grid;
 
