@@ -15,13 +15,7 @@
         android:theme="@style/Theme.SmartSudoku"
         tools:targetApi="31">
         <activity
-            android:name=".TestGridViewActivity"
-            android:exported="false" />
-        <activity
             android:name=".GameActivity"
-            android:exported="false" />
-        <activity
-            android:name=".GameActivityAA"
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
