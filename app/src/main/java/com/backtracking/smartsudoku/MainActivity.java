@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
         Button btnGridLayout = findViewById(R.id.btnGameActivity);
         btnGridLayout.setOnClickListener(v -> {
             Intent intent = new Intent(this, GameActivity.class);
-            intent.putExtra("difficulty", GameActivity.Difficulty.MEDIUM);
+            //intent.putExtra("difficulty", GameActivity.Difficulty.MEDIUM);
             startActivity(intent);
         });
     }

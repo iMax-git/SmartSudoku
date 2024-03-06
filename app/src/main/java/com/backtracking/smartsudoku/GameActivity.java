@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DiffUtil;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -64,7 +65,10 @@ public class GameActivity extends AppCompatActivity {
     private void init() {
         this.stateStack = new Stack<>();
         this.redoStateStack = new Stack<>();
-        Difficulty difficulty = (Difficulty) getIntent().getExtras().get("difficulty");
+        Intent i = getIntent();
+        System.out.println(i);
+        System.out.flush();
+        Difficulty difficulty = (Difficulty) i.getExtras().get("difficulty");
         this.difficulty = (difficulty!=null) ? difficulty : Difficulty.MEDIUM;
         this.startNewGame(this.difficulty);
     }
@@ -89,8 +93,8 @@ public class GameActivity extends AppCompatActivity {
         // insert some sudoku values in the model to test the display and the methods of the model
         // Created before the view for lambda onClickListener
         SudokuGenerator generator = new SudokuGenerator();
-        Difficulty dif = (Difficulty) getIntent().getExtras().get("difficulty");
-        switch (dif){
+
+        switch (this.difficulty){
             case EASY:
                 generator.removeNumbers(18);
                 break;
@@ -205,27 +209,6 @@ public class GameActivity extends AppCompatActivity {
 
         }
 
-        // TODO: remove this code
-        // testing Grid model methods.
-        // See output in the Logcat tab to check the numbers.
-        final List<Integer> row3 = grid.getRow(3);
-        final List<Integer> col4 = grid.getColumn(4);
-        final List<Integer> reg0 = grid.getRegion(0);
-        final List<Integer> reg8 = grid.getRegion(8);
-
-        System.out.println("row3");
-        row3.forEach(c -> System.out.printf("%d ", c));
-
-        System.out.println("\ncol4");
-        col4.forEach(c -> System.out.printf("%d ", c));
-
-        System.out.println("\nreg0");
-        reg0.forEach(c -> System.out.printf("%d ", c));
-
-        System.out.println("\nreg8");
-        reg8.forEach(c -> System.out.printf("%d ", c));
-
-        System.out.flush();
     }
 
     @Override
