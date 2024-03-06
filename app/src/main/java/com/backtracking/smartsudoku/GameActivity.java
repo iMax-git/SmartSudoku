@@ -2,6 +2,7 @@ package com.backtracking.smartsudoku;
 
 import androidx.annotation.LayoutRes;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DiffUtil;
 
 import android.app.AlertDialog;
 import android.graphics.Bitmap;
@@ -47,19 +48,25 @@ public class GameActivity extends AppCompatActivity {
     Stack<Grid> stateStack;
     Stack<Grid> redoStateStack;
     LocalDateTime timer;
+    Difficulty difficulty;
+
 
     public GameActivity() {
         super();
-        this.stateStack = new Stack<>();
-        this.redoStateStack = new Stack<>();
-        this.startNewGame();
+        init();
     }
 
     public GameActivity(@LayoutRes int contentLayoutId) {
         super(contentLayoutId);
+        init();
+    }
+
+    private void init() {
         this.stateStack = new Stack<>();
         this.redoStateStack = new Stack<>();
-        this.startNewGame();
+        Difficulty difficulty = (Difficulty) getIntent().getExtras().get("difficulty");
+        this.difficulty = (difficulty!=null) ? difficulty : Difficulty.MEDIUM;
+        this.startNewGame(this.difficulty);
     }
 
     @Override
@@ -325,7 +332,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
 
-    public void startNewGame() {
+    public void startNewGame(Difficulty difficulty) {
         this.stateStack.clear();
         this.redoStateStack.clear();
         this.timer = LocalDateTime.now();
