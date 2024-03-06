@@ -1,5 +1,7 @@
 package com.backtracking.smartsudoku.models;
 
+import androidx.annotation.CheckResult;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,6 +25,7 @@ public class ImmutableGrid {
         return this.cells[y*9+x];
     }
 
+    @CheckResult
     public ImmutableGrid set(int x, int y, int value) {
         ImmutableGrid grid = new ImmutableGrid(cells);
         grid.cells[y*9+x] = (byte)value;
