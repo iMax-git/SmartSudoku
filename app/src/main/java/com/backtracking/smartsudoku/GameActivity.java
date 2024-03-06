@@ -1,11 +1,9 @@
 package com.backtracking.smartsudoku;
 
-import androidx.annotation.LayoutRes;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DiffUtil;
 
 import android.app.AlertDialog;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -25,13 +23,10 @@ import com.backtracking.smartsudoku.models.SudokuGenerator;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
 public class GameActivity extends AppCompatActivity {
-
-    static Clock clock = Clock.systemDefaultZone();
 
     public enum Difficulty {
         EASY, MEDIUM, HARD;
@@ -39,6 +34,8 @@ public class GameActivity extends AppCompatActivity {
             return Difficulty.values()[i];
         }
     };
+
+    private static final Clock clock = Clock.systemDefaultZone();
 
     GridLayout view;
     Grid grid;
@@ -51,15 +48,12 @@ public class GameActivity extends AppCompatActivity {
 
     Integer SIZE;
 
-    Stack<Grid> stateStack = new Stack<>();
-    Stack<Grid> redoStateStack = new Stack<>();
+    Stack<Grid> stateStack;
+    Stack<Grid> redoStateStack;
     LocalDateTime timer;
     Difficulty difficulty;
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
+    SharedPreferences settings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +61,7 @@ public class GameActivity extends AppCompatActivity {
         int[] screenSize = getScreenSize();
         //SIZE = getScreenSize()[0] - (getScreenSize()[0] / 8); // TODO: Trouver une meilleure façon de calculer la taille de la grille
         SIZE = screenSize[0]-100;
-        setContentView(R.layout.activity_grid_layout);
+        setContentView(R.layout.activity_game);
         this.view = findViewById(R.id.gridLayout);
         this.ll_number_list = findViewById(R.id.ll_number_list);
 
@@ -76,9 +70,12 @@ public class GameActivity extends AppCompatActivity {
         params.height = SIZE;
         this.view.setLayoutParams(params);
 
-        // get difficulty from bundle
-        final Intent intent = getIntent();
-        this.difficulty = Difficulty.fromInt(intent.getIntExtra("difficulty", Difficulty.MEDIUM.ordinal()));
+        this.stateStack = new Stack<>();
+        this.redoStateStack = new Stack<>();
+
+        this.settings = getSharedPreferences("settings", 0);
+        this.difficulty = Difficulty.fromInt(this.settings.getInt("difficulty", Difficulty.MEDIUM.ordinal()));
+
 
         // TODO: remove this code
         // insert some sudoku values in the model to test the display and the methods of the model
@@ -202,6 +199,13 @@ public class GameActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -227,6 +231,15 @@ public class GameActivity extends AppCompatActivity {
         //       or find where to call view.getWidth after its size is known.
         // assume the view is square sized!
         this.drawBackground(SIZE);
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SharedPreferences.Editor settingsEditor = this.settings.edit();
+        settingsEditor.putInt("difficulty", difficulty.ordinal());
+        settingsEditor.apply();
     }
 
 
@@ -322,6 +335,7 @@ public class GameActivity extends AppCompatActivity {
         this.stateStack.clear();
         this.redoStateStack.clear();
         this.timer = LocalDateTime.now();
+        this.difficulty = difficulty;
     }
 
 }
