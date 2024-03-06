@@ -82,13 +82,23 @@ public class GameActivity extends AppCompatActivity {
         // insert some sudoku values in the model to test the display and the methods of the model
         // Created before the view for lambda onClickListener
         SudokuGenerator generator = new SudokuGenerator();
-        generator.removeNumbers(20); // Ajustez le nombre d'essais pour augmenter ou diminuer la difficulté
+        Difficulty dif = (Difficulty) getIntent().getExtras().get("difficulty");
+        switch (dif){
+            case EASY:
+                generator.removeNumbers(18);
+                break;
+            case MEDIUM:
+                generator.removeNumbers(37);
+                break;
+            case HARD:
+                generator.removeNumbers(56);
+                break;
+        }
         this.grid = generator.getGrid();
-
         for (int i = 0; i < 81 ; ++i) {
             TextView tv = new TextView(this);
             tv.setId(i);
-            tv.setText("X");
+            tv.setText(" ");
             tv.setTextSize(20);
             tv.setGravity(1);
             if (DEBUG_CELL) {
@@ -223,9 +233,11 @@ public class GameActivity extends AppCompatActivity {
         for (int i = 0; i < 9; ++i) {
             for (int j = 0; j < 9; ++j) {
                 TextView tv = this.cells.get(i * 9 + j);
+                int nb = grid.get(j, i);
+                if(nb!=0) {
+                    tv.setText(String.valueOf(nb));
+                }
 
-                tv.setText(String.valueOf(grid.get(j, i)));
-                //++id;
             }
         }
 
