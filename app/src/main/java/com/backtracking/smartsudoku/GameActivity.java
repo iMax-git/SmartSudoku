@@ -1,5 +1,6 @@
 package com.backtracking.smartsudoku;
 
+import androidx.annotation.LayoutRes;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -19,11 +20,16 @@ import android.widget.Toast;
 import com.backtracking.smartsudoku.models.Grid;
 import com.backtracking.smartsudoku.models.SudokuGenerator;
 
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Stack;
 
 public class GameActivity extends AppCompatActivity {
+
+    static Clock clock = Clock.systemDefaultZone();
 
     GridLayout view;
     Grid grid;
@@ -36,6 +42,23 @@ public class GameActivity extends AppCompatActivity {
 
     Integer SIZE;
 
+    Stack<Grid> stateStack;
+    Stack<Grid> redoStateStack;
+    LocalDateTime timer;
+
+    public GameActivity() {
+        super();
+        this.stateStack = new Stack<>();
+        this.redoStateStack = new Stack<>();
+        this.startNewGame();
+    }
+
+    public GameActivity(@LayoutRes int contentLayoutId) {
+        super(contentLayoutId);
+        this.stateStack = new Stack<>();
+        this.redoStateStack = new Stack<>();
+        this.startNewGame();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -163,28 +186,25 @@ public class GameActivity extends AppCompatActivity {
 
         }
 
-
-
-
         // TODO: remove this code
         // testing Grid model methods.
         // See output in the Logcat tab to check the numbers.
-        final int[] row3 = grid.getRow(3);
-        final int[] col4 = grid.getColumn(4);
-        final int[] reg0 = grid.getRegion(0);
-        final int[] reg8 = grid.getRegion(8);
+        final List<Integer> row3 = grid.getRow(3);
+        final List<Integer> col4 = grid.getColumn(4);
+        final List<Integer> reg0 = grid.getRegion(0);
+        final List<Integer> reg8 = grid.getRegion(8);
 
         System.out.println("row3");
-        Arrays.stream(row3).asLongStream().forEach(c -> System.out.printf("%d ", c));
+        row3.forEach(c -> System.out.printf("%d ", c));
 
         System.out.println("\ncol4");
-        Arrays.stream(col4).asLongStream().forEach(c -> System.out.printf("%d ", c));
+        col4.forEach(c -> System.out.printf("%d ", c));
 
         System.out.println("\nreg0");
-        Arrays.stream(reg0).asLongStream().forEach(c -> System.out.printf("%d ", c));
+        reg0.forEach(c -> System.out.printf("%d ", c));
 
         System.out.println("\nreg8");
-        Arrays.stream(reg8).asLongStream().forEach(c -> System.out.printf("%d ", c));
+        reg8.forEach(c -> System.out.printf("%d ", c));
 
         System.out.flush();
     }
@@ -206,7 +226,6 @@ public class GameActivity extends AppCompatActivity {
                 //++id;
             }
         }
-
 
         // TODO: strangely this.view.getWidth() returns 0 at this point in time.
         //       Find a way to compute or pass the desired size for the grid,
@@ -301,6 +320,13 @@ public class GameActivity extends AppCompatActivity {
         DisplayMetrics metrics = new DisplayMetrics();
         this.getWindowManager().getDefaultDisplay().getMetrics(metrics);
         return new int[]{metrics.widthPixels, metrics.heightPixels};
+    }
+
+
+    public void startNewGame() {
+        this.stateStack.clear();
+        this.redoStateStack.clear();
+        this.timer = LocalDateTime.now();
     }
 
 }

@@ -13,14 +13,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button btnGridLayout = findViewById(R.id.btnGridLayout);
+        Button btnGridLayout = findViewById(R.id.btnGameActivity);
         btnGridLayout.setOnClickListener(v -> {
-            Intent intent = new Intent(this, GameActivity.class);
-            startActivity(intent);
-        });
-
-        Button btnGameActivity = findViewById(R.id.btnGameActivity);
-        btnTestGridView.setOnClickListener(v -> {
             Intent intent = new Intent(this, GameActivity.class);
             startActivity(intent);
         });

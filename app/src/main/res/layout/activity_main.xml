@@ -20,18 +20,7 @@
         android:layout_height="match_parent"
         android:layout_margin="50dp"
         android:orientation="vertical">
-        <Button
-            android:id="@+id/btnGridLayout"
-            android:layout_width="200dp"
-            android:layout_height="40dp"
-            android:text="GridLayoutActivity"
-        />
-        <Button
-            android:id="@+id/btnTestGridView"
-            android:layout_width="200dp"
-            android:layout_height="40dp"
-            android:text="TestGridViewActivity"
-        />
+
         <Button
             android:id="@+id/btnGameActivity"
             android:layout_width="200dp"
