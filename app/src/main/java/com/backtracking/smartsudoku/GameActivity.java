@@ -33,7 +33,12 @@ public class GameActivity extends AppCompatActivity {
 
     static Clock clock = Clock.systemDefaultZone();
 
-    public enum Difficulty { EASY, MEDIUM, HARD };
+    public enum Difficulty {
+        EASY, MEDIUM, HARD;
+        public static Difficulty fromInt(int i) {
+            return Difficulty.values()[i];
+        }
+    };
 
     GridLayout view;
     Grid grid;
@@ -46,31 +51,14 @@ public class GameActivity extends AppCompatActivity {
 
     Integer SIZE;
 
-    Stack<Grid> stateStack;
-    Stack<Grid> redoStateStack;
+    Stack<Grid> stateStack = new Stack<>();
+    Stack<Grid> redoStateStack = new Stack<>();
     LocalDateTime timer;
     Difficulty difficulty;
 
-
-    public GameActivity() {
-        super();
-        init();
-    }
-
-    public GameActivity(@LayoutRes int contentLayoutId) {
-        super(contentLayoutId);
-        init();
-    }
-
-    private void init() {
-        this.stateStack = new Stack<>();
-        this.redoStateStack = new Stack<>();
-        Intent i = getIntent();
-        System.out.println(i);
-        System.out.flush();
-        Difficulty difficulty = (Difficulty) i.getExtras().get("difficulty");
-        this.difficulty = (difficulty!=null) ? difficulty : Difficulty.MEDIUM;
-        this.startNewGame(this.difficulty);
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override
@@ -88,6 +76,9 @@ public class GameActivity extends AppCompatActivity {
         params.height = SIZE;
         this.view.setLayoutParams(params);
 
+        // get difficulty from bundle
+        final Intent intent = getIntent();
+        this.difficulty = Difficulty.fromInt(intent.getIntExtra("difficulty", Difficulty.MEDIUM.ordinal()));
 
         // TODO: remove this code
         // insert some sudoku values in the model to test the display and the methods of the model
@@ -327,7 +318,7 @@ public class GameActivity extends AppCompatActivity {
     }
 
 
-    public void startNewGame(Difficulty difficulty) {
+    public void startNewGame(final Difficulty difficulty) {
         this.stateStack.clear();
         this.redoStateStack.clear();
         this.timer = LocalDateTime.now();
