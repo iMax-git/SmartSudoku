@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
@@ -26,15 +27,28 @@ public class GridLayoutActivity extends AppCompatActivity {
     GridLayout view;
     Grid grid;
 
-    boolean DEBUG_CELL = false;
+    LinearLayout ll_number_list;
+
+    boolean DEBUG_CELL = true;
 
     List<TextView> cells = new ArrayList<>();
+
+    Integer SIZE;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SIZE = getScreenSize()[0] - 100;
+
         setContentView(R.layout.activity_grid_layout);
         this.view = findViewById(R.id.gridLayout);
+        this.ll_number_list = findViewById(R.id.ll_number_list);
+
+        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+        params.width = SIZE;
+        params.height = SIZE;
+        this.view.setLayoutParams(params);
 
 
         // TODO: remove this code
@@ -61,9 +75,12 @@ public class GridLayoutActivity extends AppCompatActivity {
                 tv.setTextColor(Color.BLACK);
                 tv.setBackgroundColor(Color.WHITE);
             }
-            tv.setWidth(44);
-            tv.setHeight(44);
+            tv.setWidth(((SIZE - 3*2) / 9)-4);
+            tv.setHeight(((SIZE -3*2) / 9)-4);
             tv.setPadding(0, 0, 0, 0);
+            GridLayout.LayoutParams params1 = new GridLayout.LayoutParams();
+            params1.setMargins(3, 3, 1, 1);
+            tv.setLayoutParams(params1);
 
             tv.setOnClickListener(v -> {
                 int id = v.getId();
@@ -110,8 +127,41 @@ public class GridLayoutActivity extends AppCompatActivity {
                 builder.show();
             });
 
+
             this.cells.add(tv);
             this.view.addView(tv);
+        }
+
+
+        for (int j = 0; j < 9; ++j) {
+            TextView tv_number = new TextView(this);
+            tv_number.setText(String.valueOf(j+1));
+            tv_number.setTextSize(20);
+            tv_number.setGravity(1);
+            tv_number.setWidth(60);
+            tv_number.setHeight(60);
+            tv_number.setPadding(5, 5, 5, 5);
+
+            if (Math.random() > 0.5) {
+                tv_number.setBackgroundColor(Color.GRAY);
+                tv_number.setTextColor(Color.BLACK);
+            } else {
+                tv_number.setBackgroundColor(Color.WHITE);
+                tv_number.setTextColor(Color.BLACK);
+            }
+
+            // set margin
+            GridLayout.LayoutParams params2 = new GridLayout.LayoutParams();
+            params2.setMargins(5, 5, 5, 5);
+            tv_number.setLayoutParams(params2);
+
+
+            tv_number.setOnClickListener(v -> {
+                Toast.makeText(this, "Number " + tv_number.getText(), Toast.LENGTH_SHORT).show();
+                //tv.setText(tv_number.getText());
+            });
+            ll_number_list.addView(tv_number);
+
         }
 
 
@@ -163,7 +213,7 @@ public class GridLayoutActivity extends AppCompatActivity {
         //       Find a way to compute or pass the desired size for the grid,
         //       or find where to call view.getWidth after its size is known.
         // assume the view is square sized!
-        this.drawBackground(300);
+        this.drawBackground(SIZE);
     }
 
 
@@ -242,6 +292,16 @@ public class GridLayoutActivity extends AppCompatActivity {
         }
 
         this.view.setBackground(new BitmapDrawable(getResources(), bmp));
+    }
+
+    /**
+     * Get the screen size in pixels.
+     * @return int[] {width, height}
+     */
+    private int[] getScreenSize() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        this.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        return new int[]{metrics.widthPixels, metrics.heightPixels};
     }
 
 }
