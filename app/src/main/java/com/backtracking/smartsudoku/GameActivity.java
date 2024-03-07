@@ -195,6 +195,7 @@ public class GameActivity extends AppCompatActivity {
         super.onResume();
         drawGrid();
         drawBackground(SIZE);
+        refreshStateButtons();
     }
 
 
@@ -210,24 +211,28 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        // TODO: don't save states if the active grid is won
+        System.out.println("==== onStop ====");
+        System.out.flush();
+        // TODO: don't save states if the current grid is won
         SharedPreferences saveStore = getSharedPreferences("save", 0);
-        SharedPreferences.Editor storeEditor = settings.edit();
-        storeEditor.putString("states", serializeState(stateStack));
-        storeEditor.putString("redoStates", serializeState(redoStateStack));
+        SharedPreferences.Editor storeEditor = saveStore.edit();
+        String states = serializeState(stateStack);
+        String redoStates = serializeState(redoStateStack);
+        storeEditor.putString("states", states);
+        storeEditor.putString("redoStates", redoStates);
         storeEditor.apply();
     }
 
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
+    protected void onStart() {
+        super.onStart();
         SharedPreferences saveStore = getSharedPreferences("save", 0);
-        String states = saveStore.getString("states", null);
-        String redoStates = saveStore.getString("redoStates", null);
-        if (states!=null && redoStates!=null) {
+        String states = saveStore.getString("states", "");
+        String redoStates = saveStore.getString("redoStates", "");
+        if (!states.isEmpty()) {
             this.stateStack = deserializeState(states);
-            this.redoStateStack = deserializeState(redoStates);
+            this.redoStateStack = deserializeState(redoStates); // no-op if empty
         }
     }
 
@@ -362,24 +367,21 @@ public class GameActivity extends AppCompatActivity {
     public void replaceNumber(int x, int y, int value) {
         stateStack.push(stateStack.peek().set(x, y, value));
         redoStateStack.clear();
-        btnUndo.setEnabled(true);
-        btnRedo.setEnabled(false);
+        refreshStateButtons();
         drawGrid();
     }
 
 
     public void undo(View v) {
         redoStateStack.push(stateStack.pop());
-        btnRedo.setEnabled(true);
-        btnUndo.setEnabled(stateStack.size()>1);
+        refreshStateButtons();
         drawGrid();
     }
 
 
     public void redo(View v) {
         stateStack.push(redoStateStack.pop());
-        btnUndo.setEnabled(true);
-        btnRedo.setEnabled(!redoStateStack.isEmpty());
+        refreshStateButtons();
         drawGrid();
     }
 
@@ -414,12 +416,10 @@ public class GameActivity extends AppCompatActivity {
         if (states != null && !states.isEmpty()) {
             stateStack.clear();
             states.forEach(gridStr -> stateStack.push(ImmutableGrid.fromString(gridStr)));
-            btnUndo.setEnabled(stateStack.size()>1);
         }
         if (redoStates != null && !redoStates.isEmpty()) {
             redoStateStack.clear();
             redoStates.forEach(gridStr -> redoStateStack.push(ImmutableGrid.fromString(gridStr)));
-            btnRedo.setEnabled(true);
         }
     }
 
@@ -435,7 +435,16 @@ public class GameActivity extends AppCompatActivity {
     protected Stack<ImmutableGrid> deserializeState(String data) {
         Stack<ImmutableGrid> states = new Stack<>();
         Arrays.stream(TextUtils.split(data, ";"))
-                .forEach(state -> states.push(ImmutableGrid.fromString(state)));
+                .forEach(state -> {
+                    if (state.length() == 81) {
+                        states.push(ImmutableGrid.fromString(state));
+                    }
+                });
         return states;
+    }
+
+    protected void refreshStateButtons() {
+        btnUndo.setEnabled(stateStack.size()>1);
+        btnRedo.setEnabled(!redoStateStack.isEmpty());
     }
 }
