@@ -1,6 +1,5 @@
 package com.backtracking.smartsudoku;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -339,6 +338,11 @@ public class GameActivity extends AppCompatActivity {
     }
 
 
+    public void startNewGame(View v) {
+        startNewGame(this.difficulty);
+    }
+
+
     public void startNewGame(final Difficulty difficulty) {
         this.difficulty = difficulty;
         this.redoStateStack.clear();
@@ -356,9 +360,17 @@ public class GameActivity extends AppCompatActivity {
                 generator.removeNumbers(56);
                 break;
         }
-        this.stateStack.push(generator.getGrid());
 
+        ImmutableGrid grid = generator.getGrid();
+
+        // TODO: save non zero cell indices in a data structure (useful later)
+        //       and make the relevant CellView's non interactive
+        List<Integer> nz = grid.getNonZeroIndices();
+
+        this.stateStack.push(grid);
         this.timer = LocalDateTime.now();
+        drawGrid();
+        refreshStateButtons();
     }
 
 
@@ -415,4 +427,5 @@ public class GameActivity extends AppCompatActivity {
         btnUndo.setEnabled(stateStack.size()>1);
         btnRedo.setEnabled(!redoStateStack.isEmpty());
     }
+
 }

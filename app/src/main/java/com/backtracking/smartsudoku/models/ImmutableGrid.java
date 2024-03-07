@@ -14,17 +14,26 @@ import java.util.List;
 public class ImmutableGrid {
     private final byte[] cells = new byte[81];
 
+
     public ImmutableGrid() {
         Arrays.fill(this.cells, (byte)0);
     }
+
 
     protected ImmutableGrid(byte[] cells) {
         System.arraycopy(cells, 0, this.cells, 0, this.cells.length);
     }
 
+
     public int get(int x, int y) {
         return this.cells[y*9+x];
     }
+
+
+    public int get(int index) {
+        return this.cells[index];
+    }
+
 
     @CheckResult
     public ImmutableGrid set(int x, int y, int value) {
@@ -32,6 +41,7 @@ public class ImmutableGrid {
         grid.cells[y*9+x] = (byte)value;
         return grid;
     }
+
 
     public List<Integer> getRow(int rowIndex) {
         List<Integer> row = new ArrayList<>();
@@ -41,6 +51,7 @@ public class ImmutableGrid {
         return row;
     }
 
+
     public List<Integer> getColumn(int colIndex) {
         List<Integer> column = new ArrayList<>();
         for (int i=0; i<9; ++i) {
@@ -48,6 +59,7 @@ public class ImmutableGrid {
         }
         return column;
     }
+
 
     public List<Integer> getRegion(int regionIndex) {
         List<Integer> region = new ArrayList<>();
@@ -61,6 +73,7 @@ public class ImmutableGrid {
         return region;
     }
 
+
     @Override
     @NonNull
     public String toString() {
@@ -71,25 +84,6 @@ public class ImmutableGrid {
         return sb.toString();
     }
 
-    /*
-        below methods not tested yet
-    */
-
-    public static int coordToIndex(int x, int y) {
-        return y*9+x;
-    }
-
-    public static int indexToX(int index) { return index%9; }
-
-    public static int indexToY(int index) { return index/9; }
-
-    public static int coordToRegion(int x, int y) {
-        return indexToRegion(coordToIndex(x,y));
-    }
-
-    public static int indexToRegion(int index) {
-        return index%3;
-    }
 
     public static ImmutableGrid fromString(String str) {
         byte[] cells = new byte[81];
@@ -98,5 +92,42 @@ public class ImmutableGrid {
         }
         return new ImmutableGrid(cells);
     }
-    
+
+
+    public List<Integer> getNonZeroIndices() {
+        List<Integer> indices = new ArrayList<>();
+        for (int index=0; index<81; ++index) {
+            if (this.cells[index]>0) {
+                indices.add(index);
+            }
+        }
+        return indices;
+    }
+
+
+    public static class Coord {
+        public final int x, y;
+        Coord(int x, int y) { this.x=x; this.y=y; }
+    }
+
+    public static Coord indexToCoord(int index) { return new Coord(index%9, index/9); }
+
+
+    // untested methods
+    // TODO: test conversion methods
+    public static int coordToIndex(int x, int y) {
+        return y*9+x;
+    }
+
+
+    public static int coordToRegion(int x, int y) {
+        return indexToRegion(coordToIndex(x,y));
+    }
+
+
+    public static int indexToRegion(int index) {
+        return index%3;
+    }
+    // /untested methods
+
 }
