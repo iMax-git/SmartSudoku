@@ -1,5 +1,6 @@
 package com.backtracking.smartsudoku;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -35,7 +36,7 @@ public class GameActivity extends AppCompatActivity {
         public static Difficulty fromInt(int i) {
             return Difficulty.values()[i];
         }
-    };
+    }
 
     private static final Clock clock = Clock.systemDefaultZone();
 
@@ -61,6 +62,7 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         int[] screenSize = getScreenSize();
         //SIZE = getScreenSize()[0] - (getScreenSize()[0] / 8); // TODO: Trouver une meilleure façon de calculer la taille de la grille
         SIZE = screenSize[0]-100;
@@ -74,16 +76,6 @@ public class GameActivity extends AppCompatActivity {
         params.width = SIZE;
         params.height = SIZE;
         this.gridView.setLayoutParams(params);
-
-        this.stateStack = new Stack<>();
-        this.redoStateStack = new Stack<>();
-
-        this.settings = getSharedPreferences("settings", 0);
-        this.difficulty = Difficulty.fromInt(this.settings.getInt("difficulty", Difficulty.MEDIUM.ordinal()));
-
-
-        startNewGame(this.difficulty);
-
 
         for (int i = 0; i < 81 ; ++i) {
             TextView tv = new TextView(this);
@@ -184,6 +176,15 @@ public class GameActivity extends AppCompatActivity {
             ll_number_list.addView(tv_number);
         }
 
+        this.stateStack = new Stack<>();
+        this.redoStateStack = new Stack<>();
+
+        this.settings = getSharedPreferences("settings", 0);
+        this.difficulty = Difficulty.fromInt(this.settings.getInt("difficulty", Difficulty.MEDIUM.ordinal()));
+
+        if (savedInstanceState == null) {
+            startNewGame(this.difficulty);
+        }
     }
 
 
@@ -338,22 +339,24 @@ public class GameActivity extends AppCompatActivity {
 
 
     public void replaceNumber(int x, int y, int value) {
-        stateStack.push(this.stateStack.peek().set(x, y, value));
+        stateStack.push(stateStack.peek().set(x, y, value));
+        redoStateStack.clear();
         btnUndo.setEnabled(true);
+        btnRedo.setEnabled(false);
         drawGrid();
     }
 
 
     public void undo(View v) {
-        redoStateStack.push(this.stateStack.pop());
+        redoStateStack.push(stateStack.pop());
         btnRedo.setEnabled(true);
-        btnUndo.setEnabled(this.stateStack.size()>1);
+        btnUndo.setEnabled(stateStack.size()>1);
         drawGrid();
     }
 
 
     public void redo(View v) {
-        stateStack.push(this.redoStateStack.pop());
+        stateStack.push(redoStateStack.pop());
         btnUndo.setEnabled(true);
         btnRedo.setEnabled(!redoStateStack.isEmpty());
         drawGrid();
@@ -361,7 +364,42 @@ public class GameActivity extends AppCompatActivity {
 
 
     public ImmutableGrid getGrid() {
-        return this.stateStack.peek();
+        return stateStack.peek();
+    }
+
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putInt("difficulty", difficulty.ordinal());
+        ArrayList<String> states = new ArrayList<>();
+        ArrayList<String> redoStates = new ArrayList<>();
+        for (ImmutableGrid state : stateStack) {
+            states.add(state.toString());
+        }
+        for (ImmutableGrid state : redoStateStack) {
+            redoStates.add(state.toString());
+        }
+        savedInstanceState.putStringArrayList("states", states);
+        savedInstanceState.putStringArrayList("redoStates", redoStates);
+    }
+
+
+    @Override
+    public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        difficulty = Difficulty.fromInt(savedInstanceState.getInt("difficulty", difficulty.ordinal()));
+        List<String> states = savedInstanceState.getStringArrayList("states");
+        List<String> redoStates = savedInstanceState.getStringArrayList("redoStates");
+        if (states != null && !states.isEmpty()) {
+            stateStack.clear();
+            states.forEach(gridStr -> stateStack.push(ImmutableGrid.fromString(gridStr)));
+            btnUndo.setEnabled(stateStack.size()>1);
+        }
+        if (redoStates != null && !redoStates.isEmpty()) {
+            redoStateStack.clear();
+            redoStates.forEach(gridStr -> redoStateStack.push(ImmutableGrid.fromString(gridStr)));
+            btnRedo.setEnabled(true);
+        }
     }
 
 }

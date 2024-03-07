@@ -1,6 +1,7 @@
 package com.backtracking.smartsudoku.models;
 
 import androidx.annotation.CheckResult;
+import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -60,24 +61,42 @@ public class ImmutableGrid {
         return region;
     }
 
+    @Override
+    @NonNull
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i=0; i<81; ++i) {
+            sb.append(Character.forDigit((char)this.cells[i],10));
+        }
+        return sb.toString();
+    }
+
     /*
         below methods not tested yet
     */
 
-    static public int coordToIndex(int x, int y) {
+    public static int coordToIndex(int x, int y) {
         return y*9+x;
     }
 
-    static public int indexToX(int index) { return index%9; }
+    public static int indexToX(int index) { return index%9; }
 
-    static public int indexToY(int index) { return index/9; }
+    public static int indexToY(int index) { return index/9; }
 
-    static public int coordToRegion(int x, int y) {
+    public static int coordToRegion(int x, int y) {
         return indexToRegion(coordToIndex(x,y));
     }
 
-    static public int indexToRegion(int index) {
+    public static int indexToRegion(int index) {
         return index%3;
+    }
+
+    public static ImmutableGrid fromString(String str) {
+        byte[] cells = new byte[81];
+        for (int i=0; i<81; ++i) {
+            cells[i] = (byte) Character.digit(str.charAt(i),10);
+        }
+        return new ImmutableGrid(cells);
     }
     
 }
