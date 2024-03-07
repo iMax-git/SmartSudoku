@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +27,7 @@ import com.backtracking.smartsudoku.models.SudokuGenerator;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Stack;
 
@@ -189,12 +191,6 @@ public class GameActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-
-    @Override
     protected void onResume() {
         super.onResume();
         drawGrid();
@@ -208,6 +204,31 @@ public class GameActivity extends AppCompatActivity {
         SharedPreferences.Editor settingsEditor = this.settings.edit();
         settingsEditor.putInt("difficulty", difficulty.ordinal());
         settingsEditor.apply();
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // TODO: don't save states if the active grid is won
+        SharedPreferences saveStore = getSharedPreferences("save", 0);
+        SharedPreferences.Editor storeEditor = settings.edit();
+        storeEditor.putString("states", serializeState(stateStack));
+        storeEditor.putString("redoStates", serializeState(redoStateStack));
+        storeEditor.apply();
+    }
+
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        SharedPreferences saveStore = getSharedPreferences("save", 0);
+        String states = saveStore.getString("states", null);
+        String redoStates = saveStore.getString("redoStates", null);
+        if (states!=null && redoStates!=null) {
+            this.stateStack = deserializeState(states);
+            this.redoStateStack = deserializeState(redoStates);
+        }
     }
 
 
@@ -402,4 +423,19 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    protected String serializeState(final Stack<ImmutableGrid> states) {
+        StringBuilder sb = new StringBuilder();
+        states.forEach(state -> {
+                sb.append(state.toString());
+                sb.append(';');
+        });
+        return sb.toString();
+    }
+
+    protected Stack<ImmutableGrid> deserializeState(String data) {
+        Stack<ImmutableGrid> states = new Stack<>();
+        Arrays.stream(TextUtils.split(data, ";"))
+                .forEach(state -> states.push(ImmutableGrid.fromString(state)));
+        return states;
+    }
 }
