@@ -180,40 +180,14 @@ public class GameActivity extends AppCompatActivity {
 
         this.stateStack = new Stack<>();
         this.redoStateStack = new Stack<>();
-
-        this.settings = getSharedPreferences("settings", 0);
-        this.difficulty = Difficulty.fromInt(this.settings.getInt("difficulty", Difficulty.MEDIUM.ordinal()));
-
-        if (savedInstanceState == null) {
-            startNewGame(this.difficulty);
-        }
-    }
-
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        drawGrid();
-        drawBackground(SIZE);
-        refreshStateButtons();
-    }
-
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        SharedPreferences.Editor settingsEditor = this.settings.edit();
-        settingsEditor.putInt("difficulty", difficulty.ordinal());
-        settingsEditor.apply();
     }
 
 
     @Override
     protected void onStop() {
         super.onStop();
-        System.out.println("==== onStop ====");
-        System.out.flush();
-        // TODO: don't save states if the current grid is won
+        // when app closes (either via back button or by the system), save the current game
+        // TODO: don't save states if the current game is won
         SharedPreferences saveStore = getSharedPreferences("save", 0);
         SharedPreferences.Editor storeEditor = saveStore.edit();
         String states = serializeState(stateStack);
@@ -227,13 +201,36 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        this.settings = getSharedPreferences("settings", 0);
+        this.difficulty = Difficulty.fromInt(this.settings.getInt("difficulty", Difficulty.MEDIUM.ordinal()));
+        // check save store for interrupted game and restore it if present
         SharedPreferences saveStore = getSharedPreferences("save", 0);
         String states = saveStore.getString("states", "");
         String redoStates = saveStore.getString("redoStates", "");
         if (!states.isEmpty()) {
             this.stateStack = deserializeState(states);
             this.redoStateStack = deserializeState(redoStates); // no-op if empty
+        } else { // no game saved
+            startNewGame(this.difficulty);
         }
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SharedPreferences.Editor settingsEditor = this.settings.edit();
+        settingsEditor.putInt("difficulty", difficulty.ordinal());
+        settingsEditor.apply();
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        drawGrid();
+        drawBackground(SIZE);
+        refreshStateButtons();
     }
 
 
@@ -330,6 +327,7 @@ public class GameActivity extends AppCompatActivity {
         this.gridView.setBackground(new BitmapDrawable(getResources(), bmp));
     }
 
+
     /**
      * Get the screen size in pixels.
      * @return int[] {width, height}
@@ -364,6 +362,11 @@ public class GameActivity extends AppCompatActivity {
     }
 
 
+    public ImmutableGrid getGrid() {
+        return stateStack.peek();
+    }
+
+
     public void replaceNumber(int x, int y, int value) {
         stateStack.push(stateStack.peek().set(x, y, value));
         redoStateStack.clear();
@@ -386,43 +389,6 @@ public class GameActivity extends AppCompatActivity {
     }
 
 
-    public ImmutableGrid getGrid() {
-        return stateStack.peek();
-    }
-
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        savedInstanceState.putInt("difficulty", difficulty.ordinal());
-        ArrayList<String> states = new ArrayList<>();
-        ArrayList<String> redoStates = new ArrayList<>();
-        for (ImmutableGrid state : stateStack) {
-            states.add(state.toString());
-        }
-        for (ImmutableGrid state : redoStateStack) {
-            redoStates.add(state.toString());
-        }
-        savedInstanceState.putStringArrayList("states", states);
-        savedInstanceState.putStringArrayList("redoStates", redoStates);
-    }
-
-
-    @Override
-    public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
-        difficulty = Difficulty.fromInt(savedInstanceState.getInt("difficulty", difficulty.ordinal()));
-        List<String> states = savedInstanceState.getStringArrayList("states");
-        List<String> redoStates = savedInstanceState.getStringArrayList("redoStates");
-        if (states != null && !states.isEmpty()) {
-            stateStack.clear();
-            states.forEach(gridStr -> stateStack.push(ImmutableGrid.fromString(gridStr)));
-        }
-        if (redoStates != null && !redoStates.isEmpty()) {
-            redoStateStack.clear();
-            redoStates.forEach(gridStr -> redoStateStack.push(ImmutableGrid.fromString(gridStr)));
-        }
-    }
-
     protected String serializeState(final Stack<ImmutableGrid> states) {
         StringBuilder sb = new StringBuilder();
         states.forEach(state -> {
@@ -431,6 +397,7 @@ public class GameActivity extends AppCompatActivity {
         });
         return sb.toString();
     }
+
 
     protected Stack<ImmutableGrid> deserializeState(String data) {
         Stack<ImmutableGrid> states = new Stack<>();
@@ -442,6 +409,7 @@ public class GameActivity extends AppCompatActivity {
                 });
         return states;
     }
+
 
     protected void refreshStateButtons() {
         btnUndo.setEnabled(stateStack.size()>1);
