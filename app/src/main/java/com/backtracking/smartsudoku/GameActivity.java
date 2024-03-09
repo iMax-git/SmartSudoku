@@ -100,7 +100,7 @@ public class GameActivity extends AppCompatActivity {
                 int y = id / 9;
 
                 // Show a message with number of the cell clicked
-                Toast.makeText(this, "Cell " + id, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, "Cell " + id, Toast.LENGTH_SHORT).show();
 
                 // Show a dialog to enter a number
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -228,11 +228,10 @@ public class GameActivity extends AppCompatActivity {
 
 
     protected void drawGrid() {
-        ImmutableGrid grid = game.getGrid();
         for (int i = 0; i < 9; ++i) {
             for (int j = 0; j < 9; ++j) {
                 TextView tv = this.cells.get(i * 9 + j);
-                int nb = grid.get(j, i);
+                int nb = game.getGrid().get(j, i);
                 if (nb != 0) {
                     tv.setText(String.valueOf(nb));
                 } else {
@@ -353,6 +352,7 @@ public class GameActivity extends AppCompatActivity {
         this.game = new Game(generator.getGrid());
         this.difficulty = difficulty;
         drawGrid();
+        setupInteractiveCells();
         refreshStateButtons();
     }
 
@@ -387,6 +387,14 @@ public class GameActivity extends AppCompatActivity {
     protected void refreshStateButtons() {
         btnUndo.setEnabled(game.isUndoable());
         btnRedo.setEnabled(game.isRedoable());
+    }
+
+
+    protected void setupInteractiveCells() {
+        for (int i=0; i<gridView.getChildCount(); ++i) {
+            View cellView = gridView.getChildAt(i);
+            cellView.setEnabled(game.getBaseGrid().get(i) == 0);
+        }
     }
 
 }
