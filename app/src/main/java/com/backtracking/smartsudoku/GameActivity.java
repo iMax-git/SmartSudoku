@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
@@ -20,15 +19,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.backtracking.smartsudoku.models.Game;
 import com.backtracking.smartsudoku.models.ImmutableGrid;
 import com.backtracking.smartsudoku.models.SudokuGenerator;
 
-import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Stack;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -38,8 +35,6 @@ public class GameActivity extends AppCompatActivity {
             return Difficulty.values()[i];
         }
     }
-
-    private static final Clock clock = Clock.systemDefaultZone();
 
     GridLayout gridView;
 
@@ -53,12 +48,11 @@ public class GameActivity extends AppCompatActivity {
 
     Integer SIZE;
 
-    Stack<ImmutableGrid> stateStack;
-    Stack<ImmutableGrid> redoStateStack;
-    LocalDateTime timer;
-    Difficulty difficulty;
+    Game game = new Game();
+    Difficulty difficulty = Difficulty.MEDIUM;
+    LocalDateTime timer = LocalDateTime.now();
 
-    SharedPreferences settings;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +71,7 @@ public class GameActivity extends AppCompatActivity {
         params.width = SIZE;
         params.height = SIZE;
         this.gridView.setLayoutParams(params);
+
 
         for (int i = 0; i < 81 ; ++i) {
             TextView tv = new TextView(this);
@@ -110,7 +105,7 @@ public class GameActivity extends AppCompatActivity {
                 // Show a dialog to enter a number
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Modifier la case");
-                builder.setMessage("Entrez un chiffre entre 1 et 9 \n Numéro de la case : " + getGrid().get(x,y) + ".");
+                builder.setMessage("Entrez un chiffre entre 1 et 9 \n Numéro de la case : " + game.getGrid().get(x,y) + ".");
 
                 // Create Layout for the form
                 LinearLayout ll_form = new LinearLayout(this);
@@ -129,7 +124,7 @@ public class GameActivity extends AppCompatActivity {
                 builder.setPositiveButton("Valider", (dialog, which) -> {
                     String value = et_form.getText().toString();
                     if (value.matches("[1-9]")) {
-                        this.replaceNumber(x, y, Integer.parseInt(value)); // INFO: Save the value in the model (To avoid to be lost when the gridView is redrawn)
+                        this.playNumber(x, y, Integer.parseInt(value)); // INFO: Save the value in the model (To avoid to be lost when the gridView is redrawn)
                     } else {
                         Toast.makeText(this, R.string.choice_number, Toast.LENGTH_SHORT).show();
                     }
@@ -176,9 +171,6 @@ public class GameActivity extends AppCompatActivity {
             });
             ll_number_list.addView(tv_number);
         }
-
-        this.stateStack = new Stack<>();
-        this.redoStateStack = new Stack<>();
     }
 
 
@@ -186,13 +178,13 @@ public class GameActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         // when app closes (either via back button or by the system), save the current game
-        // TODO: don't save states if the current game is won
         SharedPreferences saveStore = getSharedPreferences("save", 0);
         SharedPreferences.Editor storeEditor = saveStore.edit();
-        String states = serializeState(stateStack);
-        String redoStates = serializeState(redoStateStack);
-        storeEditor.putString("states", states);
-        storeEditor.putString("redoStates", redoStates);
+        if (!game.isWon()) {
+            storeEditor.putString("gameStates", game.serialize());
+        } else {
+            storeEditor.remove("gameStates");
+        }
         storeEditor.apply();
     }
 
@@ -200,15 +192,16 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        this.settings = getSharedPreferences("settings", 0);
-        this.difficulty = Difficulty.fromInt(this.settings.getInt("difficulty", Difficulty.MEDIUM.ordinal()));
+
+        // restore settings
+        SharedPreferences settings = getSharedPreferences("settings", 0);
+        this.difficulty = Difficulty.fromInt(settings.getInt("difficulty", Difficulty.MEDIUM.ordinal()));
+
         // check save store for interrupted game and restore it if present
-        SharedPreferences saveStore = getSharedPreferences("save", 0);
-        String states = saveStore.getString("states", "");
-        String redoStates = saveStore.getString("redoStates", "");
-        if (!states.isEmpty()) {
-            this.stateStack = deserializeState(states);
-            this.redoStateStack = deserializeState(redoStates); // no-op if empty
+        SharedPreferences save = getSharedPreferences("save", 0);
+        String gameStates = save.getString("gameStates", "");
+        if (!gameStates.isEmpty()) {
+            this.game = Game.deserialize(gameStates);
         } else { // no game saved
             startNewGame(this.difficulty);
         }
@@ -218,7 +211,7 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        SharedPreferences.Editor settingsEditor = this.settings.edit();
+        SharedPreferences.Editor settingsEditor = getSharedPreferences("settings",0).edit();
         settingsEditor.putInt("difficulty", difficulty.ordinal());
         settingsEditor.apply();
     }
@@ -234,7 +227,7 @@ public class GameActivity extends AppCompatActivity {
 
 
     protected void drawGrid() {
-        ImmutableGrid grid = getGrid();
+        ImmutableGrid grid = game.getGrid();
         for (int i = 0; i < 9; ++i) {
             for (int j = 0; j < 9; ++j) {
                 TextView tv = this.cells.get(i * 9 + j);
@@ -344,12 +337,8 @@ public class GameActivity extends AppCompatActivity {
 
 
     public void startNewGame(final Difficulty difficulty) {
-        this.difficulty = difficulty;
-        this.redoStateStack.clear();
-        this.stateStack.clear();
-
         SudokuGenerator generator = new SudokuGenerator();
-        switch (this.difficulty){
+        switch (difficulty) {
             case EASY:
                 generator.removeNumbers(18);
                 break;
@@ -360,72 +349,43 @@ public class GameActivity extends AppCompatActivity {
                 generator.removeNumbers(56);
                 break;
         }
-
-        ImmutableGrid grid = generator.getGrid();
-
-        // TODO: save non zero cell indices in a data structure (useful later)
-        //       and make the relevant CellView's non interactive
-        List<Integer> nz = grid.getNonZeroIndices();
-
-        this.stateStack.push(grid);
-        this.timer = LocalDateTime.now();
+        this.game = new Game(generator.getGrid());
+        this.difficulty = difficulty;
         drawGrid();
         refreshStateButtons();
     }
 
 
-    public ImmutableGrid getGrid() {
-        return stateStack.peek();
-    }
-
-
-    public void replaceNumber(int x, int y, int value) {
-        stateStack.push(stateStack.peek().set(x, y, value));
-        redoStateStack.clear();
-        refreshStateButtons();
-        drawGrid();
+    public void playNumber(int x, int y, int value) {
+        if (!game.isWon()) {
+            game.setNumber(x, y, value);
+            refreshStateButtons();
+            drawGrid();
+        }
     }
 
 
     public void undo(View v) {
-        redoStateStack.push(stateStack.pop());
-        refreshStateButtons();
-        drawGrid();
+        if (game.isUndoable()) {
+            game.undo();
+            refreshStateButtons();
+            drawGrid();
+        }
     }
 
 
     public void redo(View v) {
-        stateStack.push(redoStateStack.pop());
-        refreshStateButtons();
-        drawGrid();
-    }
-
-
-    protected String serializeState(final Stack<ImmutableGrid> states) {
-        StringBuilder sb = new StringBuilder();
-        states.forEach(state -> {
-                sb.append(state.toString());
-                sb.append(';');
-        });
-        return sb.toString();
-    }
-
-
-    protected Stack<ImmutableGrid> deserializeState(String data) {
-        Stack<ImmutableGrid> states = new Stack<>();
-        Arrays.stream(TextUtils.split(data, ";"))
-                .forEach(state -> {
-                    if (state.length() == 81) {
-                        states.push(ImmutableGrid.fromString(state));
-                    }
-                });
-        return states;
+        if (game.isRedoable()) {
+            game.redo();
+            refreshStateButtons();
+            drawGrid();
+        }
     }
 
 
     protected void refreshStateButtons() {
-        btnUndo.setEnabled(stateStack.size()>1);
-        btnRedo.setEnabled(!redoStateStack.isEmpty());
+        btnUndo.setEnabled(game.isUndoable());
+        btnRedo.setEnabled(game.isRedoable());
     }
 
 }
