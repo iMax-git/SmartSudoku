@@ -12,20 +12,21 @@ public class Game
 {
     private Stack<ImmutableGrid> stateStack;
     private Stack<ImmutableGrid> redoStateStack;
-    private boolean isWon;
+    private ImmutableGrid solution;
 
 
     public Game() {
         this.stateStack = new Stack<>();
         this.stateStack.push(new ImmutableGrid());
         this.redoStateStack = new Stack<>();
-        this.isWon = false;
+        this.solution = new ImmutableGrid();
     }
 
-    public Game(@NonNull ImmutableGrid grid) {
+    public Game(@NonNull ImmutableGrid grid, @NonNull ImmutableGrid solution) {
         this();
         this.stateStack.clear();
         this.stateStack.push(grid);
+        this.solution = solution;
     }
 
 
@@ -59,7 +60,7 @@ public class Game
 
 
     public boolean isWon() {
-        return this.isWon;
+        return this.solution.equals(this.getGrid());
     }
 
 
@@ -70,6 +71,11 @@ public class Game
 
     public ImmutableGrid getBaseGrid() {
         return this.stateStack.get(0);
+    }
+
+
+    public ImmutableGrid getSolution() {
+        return this.solution;
     }
 
 

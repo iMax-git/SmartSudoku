@@ -1,5 +1,6 @@
 package com.backtracking.smartsudoku;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -28,6 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameActivity extends AppCompatActivity {
+
+    protected static int CELL_BG_COLOR_DISABLED = 0xFFEEEEEE;
 
     public enum Difficulty {
         EASY, MEDIUM, HARD;
@@ -193,11 +196,13 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
         // restore settings
-        SharedPreferences settings = getSharedPreferences("settings", 0);
-        this.difficulty = Difficulty.fromInt(settings.getInt("difficulty", Difficulty.MEDIUM.ordinal()));
-
+        try {
+            SharedPreferences settings = getSharedPreferences("settings", 0);
+            this.difficulty = Difficulty.fromInt(settings.getInt("difficulty", Difficulty.MEDIUM.ordinal()));
+        } catch (Exception ex) {
+            this.difficulty = Difficulty.MEDIUM;
+        }
         // check save store for interrupted game and restore it if present
         SharedPreferences save = getSharedPreferences("save", 0);
         String gameStates = save.getString("gameStates", "");
@@ -228,15 +233,22 @@ public class GameActivity extends AppCompatActivity {
 
 
     protected void drawGrid() {
-        for (int i = 0; i < 9; ++i) {
-            for (int j = 0; j < 9; ++j) {
-                TextView tv = this.cells.get(i * 9 + j);
-                int nb = game.getGrid().get(j, i);
-                if (nb != 0) {
-                    tv.setText(String.valueOf(nb));
-                } else {
-                    tv.setText("");
-                }
+
+        ImmutableGrid grid = game.getGrid();
+        ImmutableGrid baseGrid = game.getBaseGrid();
+
+        for (int i = 0; i < 81; ++i) {
+            TextView cellView = cells.get(i);
+            int cellNumber = grid.get(i);
+            if (cellNumber!=0) {
+                cellView.setText(String.valueOf(cellNumber));
+            } else {
+                cellView.setText("");
+            }
+            if (baseGrid.get(i)!=0) {
+                cellView.setBackgroundColor(CELL_BG_COLOR_DISABLED);
+            } else {
+                cellView.setBackgroundColor(Color.TRANSPARENT);
             }
         }
     }
@@ -331,16 +343,21 @@ public class GameActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Handling the UI event to start a new game
+     */
     public void startNewGame(View v) {
         startNewGame(this.difficulty);
     }
 
 
-    public void startNewGame(final Difficulty difficulty) {
+    public void startNewGame(@NonNull final Difficulty difficulty) {
         SudokuGenerator generator = new SudokuGenerator();
+        ImmutableGrid solution = generator.getGrid();
         switch (difficulty) {
             case EASY:
                 generator.removeNumbers(18);
+//                generator.removeNumbers(1); // to DEBUG win condition
                 break;
             case MEDIUM:
                 generator.removeNumbers(37);
@@ -349,18 +366,28 @@ public class GameActivity extends AppCompatActivity {
                 generator.removeNumbers(56);
                 break;
         }
-        this.game = new Game(generator.getGrid());
+        this.game = new Game(generator.getGrid(), solution);
         this.difficulty = difficulty;
         drawGrid();
         setupInteractiveCells();
         refreshStateButtons();
+
+        // DEBUG
+        System.out.println(game.getBaseGrid());
+        System.out.println();
+        System.out.println(game.getSolution());
     }
 
 
     public void playNumber(int x, int y, int value) {
         if (!game.isWon()) {
             game.setNumber(x, y, value);
-            refreshStateButtons();
+            if (game.isWon()) {
+                setGridViewEnabled(false);
+                setStateButtonsEnabled(false);
+            } else {
+                refreshStateButtons();
+            }
             drawGrid();
         }
     }
@@ -387,6 +414,20 @@ public class GameActivity extends AppCompatActivity {
     protected void refreshStateButtons() {
         btnUndo.setEnabled(game.isUndoable());
         btnRedo.setEnabled(game.isRedoable());
+    }
+
+
+    protected void setStateButtonsEnabled(boolean enabled) {
+        btnUndo.setEnabled(enabled);
+        btnRedo.setEnabled(enabled);
+    }
+
+
+    protected void setGridViewEnabled(boolean enabled) {
+        for (int i=0; i<gridView.getChildCount(); ++i) {
+            View cellView = gridView.getChildAt(i);
+            cellView.setEnabled(enabled);
+        }
     }
 
 

@@ -2,6 +2,7 @@ package com.backtracking.smartsudoku.models;
 
 import androidx.annotation.CheckResult;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -130,4 +131,13 @@ public class ImmutableGrid {
     }
     // /untested methods
 
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (!(obj instanceof ImmutableGrid)) {
+            return super.equals(obj);
+        }
+        ImmutableGrid grid = (ImmutableGrid) obj;
+        return Arrays.equals(this.cells, grid.cells);
+    }
 }
