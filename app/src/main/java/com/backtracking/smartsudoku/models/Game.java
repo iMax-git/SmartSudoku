@@ -28,8 +28,11 @@ public class Game
 
 
     public void setNumber(int x, int y, int value) {
-        stateStack.push(stateStack.peek().set(x, y, value));
-        redoStateStack.clear();
+        ImmutableGrid originalGrid = stateStack.get(0);
+        if (originalGrid.get(x,y) == 0) {
+            stateStack.push(stateStack.peek().set(x, y, value));
+            redoStateStack.clear();
+        }
     }
 
 
