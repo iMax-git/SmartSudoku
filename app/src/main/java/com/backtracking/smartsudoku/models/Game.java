@@ -17,19 +17,21 @@ public class Game
 
     public Game() {
         this.stateStack = new Stack<>();
+        this.stateStack.push(new ImmutableGrid());
         this.redoStateStack = new Stack<>();
         this.isWon = false;
     }
 
     public Game(@NonNull ImmutableGrid grid) {
         this();
+        this.stateStack.clear();
         this.stateStack.push(grid);
     }
 
 
     public void setNumber(int x, int y, int value) {
-        ImmutableGrid originalGrid = stateStack.get(0);
-        if (originalGrid.get(x,y) == 0) {
+        ImmutableGrid baseGrid = stateStack.get(0);
+        if (baseGrid.get(x,y) == 0) {
             stateStack.push(stateStack.peek().set(x, y, value));
             redoStateStack.clear();
         }
@@ -63,6 +65,11 @@ public class Game
 
     public ImmutableGrid getGrid() {
         return this.stateStack.peek();
+    }
+
+
+    public ImmutableGrid getBaseGrid() {
+        return this.stateStack.get(0);
     }
 
 

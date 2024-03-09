@@ -177,7 +177,8 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        // when app closes (either via back button or by the system), save the current game
+        // when app closes (either via back button or by the system),
+        // save the current game if it is not finished.
         SharedPreferences saveStore = getSharedPreferences("save", 0);
         SharedPreferences.Editor storeEditor = saveStore.edit();
         if (!game.isWon()) {
