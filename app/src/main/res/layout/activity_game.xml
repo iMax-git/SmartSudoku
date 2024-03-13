@@ -49,32 +49,46 @@
 
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintTop_toBottomOf="@+id/ll_number_list"
-        android:layout_margin="12dp"
-        >
-        <Button
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ll_number_list">
+
+        <ImageButton
             android:id="@+id/btnUndo"
-            android:layout_width="90dp"
-            android:layout_height="50dp"
-            android:text="undo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:contentDescription="UndoButton"
             android:onClick="undo"
-            android:enabled="false" />
-        <Button
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/image_button_undo_selector" />
+
+        <ImageButton
             android:id="@+id/btnRedo"
-            android:layout_width="90dp"
-            android:layout_height="50dp"
-            android:text="redo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:contentDescription="RedoButton"
             android:onClick="redo"
-            android:enabled="false" />
-        <Button
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/image_button_redo_selector" />
+
+        <ImageButton
             android:id="@+id/btnNewGame"
-            android:layout_width="90dp"
-            android:layout_height="50dp"
-            android:text="new game"
-            android:onClick="startNewGame" />
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:contentDescription="StartGame"
+            android:onClick="startNewGame"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/new_game_btn" />
     </LinearLayout>
 
 
