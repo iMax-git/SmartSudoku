@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,7 +44,7 @@ public class GameActivity extends AppCompatActivity {
 
     LinearLayout ll_number_list;
 
-    Button btnUndo, btnRedo;
+    ImageButton btnUndo, btnRedo;
 
     boolean DEBUG_CELL = false;
 
@@ -144,36 +145,6 @@ public class GameActivity extends AppCompatActivity {
             this.gridView.addView(tv);
         }
 
-
-        for (int j = 0; j < 9; ++j) {
-            TextView tv_number = new TextView(this);
-            tv_number.setText(String.valueOf(j+1));
-            tv_number.setTextSize(20);
-            tv_number.setGravity(1);
-            tv_number.setWidth(60);
-            tv_number.setHeight(60);
-            tv_number.setPadding(5, 5, 5, 5);
-
-            if (Math.random() > 0.5) {
-                tv_number.setBackgroundColor(Color.GRAY);
-                tv_number.setTextColor(Color.BLACK);
-            } else {
-                tv_number.setBackgroundColor(Color.WHITE);
-                tv_number.setTextColor(Color.BLACK);
-            }
-
-            // set margin
-            GridLayout.LayoutParams params2 = new GridLayout.LayoutParams();
-            params2.setMargins(5, 5, 5, 5);
-            tv_number.setLayoutParams(params2);
-
-
-            tv_number.setOnClickListener(v -> {
-                Toast.makeText(this, "Number " + tv_number.getText(), Toast.LENGTH_SHORT).show();
-                //tv.setText(tv_number.getText());
-            });
-            ll_number_list.addView(tv_number);
-        }
     }
 
 

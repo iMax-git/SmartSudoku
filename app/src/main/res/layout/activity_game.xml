@@ -13,28 +13,27 @@
         android:layout_width="300dp"
         android:layout_height="300dp"
 
+        android:layout_margin="0dp"
+        android:alignmentMode="alignMargins"
+        android:columnCount="9"
+        android:columnOrderPreserved="false"
+        android:orientation="horizontal"
+        android:padding="0dp"
+
+
+        android:useDefaultMargins="false"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:alignmentMode="alignMargins"
-        android:columnOrderPreserved="false"
 
 
-        android:columnCount="9"
-        android:orientation="horizontal"
-        android:padding="0dp"
-        android:useDefaultMargins="false"
-        tools:layout_editor_absoluteX="0px"
-        tools:layout_editor_absoluteY="0px"
-        android:layout_margin="0dp"
-
-
-
+        app:layout_constraintVertical_bias="0.108"
         tools:ignore="MissingConstraints">
 
 
     </GridLayout>
+
     <LinearLayout
         android:id="@+id/ll_number_list"
         android:layout_width="wrap_content"
@@ -51,30 +50,45 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="12dp"
         android:orientation="horizontal"
         app:layout_constraintTop_toBottomOf="@+id/ll_number_list"
-        android:layout_margin="12dp"
-        >
-        <Button
+        tools:layout_editor_absoluteX="12dp">
+
+        <ImageButton
             android:id="@+id/btnUndo"
-            android:layout_width="90dp"
-            android:layout_height="50dp"
-            android:text="undo"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginEnd="1dp"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:contentDescription="UndoButton"
             android:onClick="undo"
-            android:enabled="false" />
-        <Button
+            tools:src="@drawable/undo_btn" />
+
+        <ImageButton
             android:id="@+id/btnRedo"
-            android:layout_width="90dp"
-            android:layout_height="50dp"
-            android:text="redo"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:contentDescription="RedoButton"
             android:onClick="redo"
-            android:enabled="false" />
-        <Button
+            app:srcCompat="@drawable/redo_btn" />
+
+        <ImageButton
             android:id="@+id/btnNewGame"
-            android:layout_width="90dp"
-            android:layout_height="50dp"
-            android:text="new game"
-            android:onClick="startNewGame" />
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginStart="1dp"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:contentDescription="StartGame"
+            android:onClick="startNewGame"
+            app:srcCompat="@drawable/new_game_btn" />
     </LinearLayout>
 
 
