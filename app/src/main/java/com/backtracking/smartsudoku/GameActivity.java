@@ -5,11 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -29,8 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameActivity extends AppCompatActivity {
-
-    protected static int CELL_BG_COLOR_DISABLED = 0xFFEEEEEE;
 
     public enum Difficulty {
         EASY, MEDIUM, HARD;
@@ -55,11 +52,18 @@ public class GameActivity extends AppCompatActivity {
     Difficulty difficulty = Difficulty.MEDIUM;
     LocalDateTime timer = LocalDateTime.now();
 
-
+    /**
+     * Forme pour les rectangles des cellules par défaut(initialement défini, sélectionnées et de base
+     */
+    ShapeDrawable shapeDefaultDrawable;
+    ShapeDrawable shapeSelectedDrawable;
+    ShapeDrawable shapeBaseDrawable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        defineRects();
 
         int[] screenSize = getScreenSize();
         //SIZE = getScreenSize()[0] - (getScreenSize()[0] / 8); // TODO: Trouver une meilleure façon de calculer la taille de la grille
@@ -70,9 +74,12 @@ public class GameActivity extends AppCompatActivity {
         this.btnRedo = findViewById(R.id.btnRedo);
         this.btnUndo = findViewById(R.id.btnUndo);
 
+        this.gridView.setBackgroundColor(Color.BLACK);
         GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-        params.width = SIZE;
-        params.height = SIZE;
+        // wrap_content
+        params.width = GridLayout.LayoutParams.WRAP_CONTENT;
+        params.height = GridLayout.LayoutParams.WRAP_CONTENT;
+
         this.gridView.setLayoutParams(params);
 
 
@@ -82,6 +89,7 @@ public class GameActivity extends AppCompatActivity {
             tv.setText(" ");
             tv.setTextSize(20);
             tv.setGravity(1);
+
             if (DEBUG_CELL) {
                 tv.setTextColor(Color.WHITE);
                 tv.setBackgroundColor(Color.BLACK);
@@ -89,12 +97,14 @@ public class GameActivity extends AppCompatActivity {
                 tv.setTextColor(Color.BLACK);
                 tv.setBackgroundColor(Color.TRANSPARENT);
             }
-            int step = (SIZE / 9);
+            int step = (SIZE / 9)-2;
             tv.setWidth(step);
             tv.setHeight(step);
-            tv.setPadding(0, 0, 0, 0);
+            int padding = 0;
+            tv.setPadding(padding, padding, padding, padding);
             GridLayout.LayoutParams params1 = new GridLayout.LayoutParams();
-            params1.setMargins(0, 0, 0, 0);
+            int margin = 1;
+            params1.setMargins( margin, margin, margin, margin);
             tv.setLayoutParams(params1);
 
             tv.setOnClickListener(v -> {
@@ -133,9 +143,7 @@ public class GameActivity extends AppCompatActivity {
                     }
                 });
 
-                builder.setNegativeButton(R.string.annuler, (dialog, which) -> {
-                    dialog.cancel();
-                });
+                builder.setNegativeButton(R.string.annuler, (dialog, which) -> dialog.cancel());
 
                 builder.show();
             });
@@ -227,7 +235,6 @@ public class GameActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         drawGrid();
-        drawBackground(SIZE);
         refreshStateButtons();
     }
 
@@ -246,89 +253,62 @@ public class GameActivity extends AppCompatActivity {
                 cellView.setText("");
             }
             if (baseGrid.get(i)!=0) {
-                cellView.setBackgroundColor(CELL_BG_COLOR_DISABLED);
+                cellView.setBackground(shapeDefaultDrawable);
+
             } else {
-                cellView.setBackgroundColor(Color.TRANSPARENT);
+                cellView.setBackground(shapeBaseDrawable);
             }
         }
     }
 
 
+
+
     /**
-     * Draw the background of the grid.
-     * @param sideSize the size of the grid (in pixels ?)
+     * Défini les paramètres des rectangles en arrirère plan des TextView (cellules)
      */
-    private void drawBackground(final int sideSize) {
-        Bitmap bmp = Bitmap.createBitmap(sideSize,sideSize, Bitmap.Config.ARGB_8888);
+    private void defineRects() {
 
-        // the canvas will draw on the bitmap
-        Canvas canvas = new Canvas(bmp);
 
-        canvas.drawColor(Color.WHITE);
+        RoundRectShape defautRect = new RoundRectShape(new float[] {
+                0,0,0,0,
+                0,0,0,0
+        }, null, null);
 
-        final float cellBorderWidth = 1.f; // BORDER WIDTH & HEIGHT OF CELL ?
-        final float regBorderWidth = 2.f; // BORDER WIDTH & HEIGHT OF GRID ?
-        final float cellSize = (sideSize - 3*regBorderWidth) / 9.f;
+        RoundRectShape selectedRect = new RoundRectShape(new float[] {
+                0,0,0,0,
+                0,0,0,0
+        }, null, null);
 
-        Paint painter = new Paint();
-        painter.setStyle(Paint.Style.STROKE);
+        RoundRectShape baseRect = new RoundRectShape(new float[] {
+                0,0,0,0,
+                0,0,0,0
+        }, null, null);
+        
+        shapeDefaultDrawable = new ShapeDrawable(defautRect);
+        shapeSelectedDrawable = new ShapeDrawable(selectedRect);
+        shapeBaseDrawable = new ShapeDrawable(baseRect);
+        
+        shapeDefaultDrawable.getPaint().setColor(Color.parseColor("#FFEEEE"));
+        shapeDefaultDrawable.getPaint().setStyle(Paint.Style.FILL_AND_STROKE);
+        shapeDefaultDrawable.getPaint().setStrokeWidth(1);
+        shapeDefaultDrawable.getPaint().setAntiAlias(true);
+        shapeDefaultDrawable.getPaint().setDither(true);
+        shapeDefaultDrawable.getPaint().setStrokeJoin(Paint.Join.ROUND);
 
-        /*
-         * draw cells
-         */
-        painter.setStrokeWidth(cellBorderWidth);
+        shapeSelectedDrawable.getPaint().setColor(Color.parseColor("#FF9000"));
+        shapeSelectedDrawable.getPaint().setStyle(Paint.Style.FILL_AND_STROKE);
+        shapeSelectedDrawable.getPaint().setStrokeWidth(1);
+        shapeSelectedDrawable.getPaint().setAntiAlias(true);
+        shapeSelectedDrawable.getPaint().setDither(true);
+        shapeSelectedDrawable.getPaint().setStrokeJoin(Paint.Join.ROUND);
 
-        for (int i=1; i < 9; ++i) {
-            // vertical lines
-            canvas.drawLine(
-                    i * cellSize + regBorderWidth,
-                    regBorderWidth,
-                    i * cellSize + regBorderWidth,
-                    sideSize - 2*regBorderWidth,
-                    painter
-            );
-        }
-
-        for (int i=1; i < 9; ++i) {
-            // horizontal lines
-            canvas.drawLine(
-                    regBorderWidth,
-                    i * cellSize + regBorderWidth,
-                    sideSize - 2*regBorderWidth,
-                    i * cellSize + regBorderWidth,
-                    painter
-            );
-        }
-
-        /*
-         * draw regions and grid border
-         */
-        final float regSize = 3*cellSize;
-        painter.setStrokeWidth(regBorderWidth);
-
-        for (int i=0; i <= 3; ++i) {
-            // vertical lines MORE LARGE
-            canvas.drawLine(
-                    i * regSize + regBorderWidth,
-                    regBorderWidth,
-                    i * regSize + regBorderWidth,
-                    sideSize - 2*regBorderWidth,
-                    painter
-            );
-        }
-
-        for (int i=0; i <= 3; ++i) {
-            // horizontal lines MORE LARGE
-            canvas.drawLine(
-                    regBorderWidth,
-                    i * regSize + regBorderWidth,
-                    sideSize - 2*regBorderWidth,
-                    i * regSize + regBorderWidth,
-                    painter
-            );
-        }
-
-        this.gridView.setBackground(new BitmapDrawable(getResources(), bmp));
+        shapeBaseDrawable.getPaint().setColor(Color.WHITE);
+        shapeBaseDrawable.getPaint().setStyle(Paint.Style.FILL_AND_STROKE);
+        shapeBaseDrawable.getPaint().setStrokeWidth(1);
+        shapeBaseDrawable.getPaint().setAntiAlias(true);
+        shapeBaseDrawable.getPaint().setDither(true);
+        shapeBaseDrawable.getPaint().setStrokeJoin(Paint.Join.ROUND);
     }
 
 
