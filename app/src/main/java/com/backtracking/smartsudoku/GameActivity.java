@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -318,7 +319,21 @@ public class GameActivity extends AppCompatActivity {
      * Handling the UI event to start a new game
      */
     public void startNewGame(View v) {
-        startNewGame(this.difficulty);
+
+        // Création d'une boîte de dialogue pour choisir la difficulté
+        final String[] difficulties = {"EASY", "MEDIUM", "HARD"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choisissez une difficulté")
+                .setItems(difficulties, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        // 'which' correspond à l'index de l'élément sélectionné
+                        // Démarrez ici votre jeu avec la difficulté choisie
+                        startNewGame(Difficulty.fromInt(which));
+                    }
+                });
+        builder.create().show();
+
     }
 
 
@@ -327,7 +342,7 @@ public class GameActivity extends AppCompatActivity {
         ImmutableGrid solution = generator.getGrid();
         switch (difficulty) {
             case EASY:
-                generator.removeNumbers(18);
+                generator.removeNumbers(25);
 //                generator.removeNumbers(1); // to DEBUG win condition
                 break;
             case MEDIUM:
@@ -337,6 +352,7 @@ public class GameActivity extends AppCompatActivity {
                 generator.removeNumbers(56);
                 break;
         }
+
         this.game = new Game(generator.getGrid(), solution);
         this.difficulty = difficulty;
         drawGrid();
