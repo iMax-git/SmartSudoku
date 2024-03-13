@@ -38,6 +38,7 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    LinearLayout gridContainer;
     GridLayout gridView;
 
     ImageButton btnUndo, btnRedo;
@@ -57,11 +58,26 @@ public class GameActivity extends AppCompatActivity {
     ShapeDrawable shapeSelectedDrawable;
     ShapeDrawable shapeBaseDrawable;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_game);
         defineRects();
-        createGrid(getScreenSize()[0]);
+        this.gridContainer = findViewById(R.id.gridContainer);
+        this.gridView = findViewById(R.id.gridLayout);
+        this.btnRedo = findViewById(R.id.btnRedo);
+        this.btnUndo = findViewById(R.id.btnUndo);
+        this.gridContainer.addOnLayoutChangeListener((
+                View v,
+                int left, int top, int right, int bottom,
+                int oldLeft, int oldTop, int oldRight, int oldBottom) ->
+        {
+            System.out.printf("===> %d %d %d %d\n===> %d %d %d %d\n",
+                    left, top, right, bottom,
+                    oldLeft, oldTop, oldRight, oldBottom);
+            createGrid(getScreenSize()[0]);
+        });
     }
 
 
@@ -122,12 +138,6 @@ public class GameActivity extends AppCompatActivity {
 
     protected void createGrid(int gridSize)
     {
-        setContentView(R.layout.activity_game);
-
-        this.gridView = findViewById(R.id.gridLayout);
-        this.btnRedo = findViewById(R.id.btnRedo);
-        this.btnUndo = findViewById(R.id.btnUndo);
-
         this.gridView.setBackgroundColor(Color.BLACK);
 
         for (int i = 0; i < 81 ; ++i) {
