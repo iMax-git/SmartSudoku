@@ -4,4 +4,7 @@
     <string name="chiffre">"Chiffre : "</string>
     <string name="annuler">Annuler</string>
     <string name="choice_number">Veuillez entrer un chiffre entre 1 et 9</string>
+    <string name="undo">undo</string>
+    <string name="redo">redo</string>
+    <string name="new_game">new game</string>
 </resources>
