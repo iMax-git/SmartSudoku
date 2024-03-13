@@ -40,15 +40,11 @@ public class GameActivity extends AppCompatActivity {
 
     GridLayout gridView;
 
-    LinearLayout ll_number_list;
-
     ImageButton btnUndo, btnRedo;
 
     boolean DEBUG_CELL = false;
 
     List<TextView> cells = new ArrayList<>();
-
-    Integer SIZE;
 
     Game game = new Game();
     Difficulty difficulty = Difficulty.MEDIUM;
@@ -64,96 +60,8 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         defineRects();
-
-        int[] screenSize = getScreenSize();
-        //SIZE = getScreenSize()[0] - (getScreenSize()[0] / 8); // TODO: Trouver une meilleure façon de calculer la taille de la grille
-        SIZE = screenSize[0]-100;
-        setContentView(R.layout.activity_game);
-        this.gridView = findViewById(R.id.gridLayout);
-        this.ll_number_list = findViewById(R.id.ll_number_list);
-        this.btnRedo = findViewById(R.id.btnRedo);
-        this.btnUndo = findViewById(R.id.btnUndo);
-
-        this.gridView.setBackgroundColor(Color.BLACK);
-        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-        // wrap_content
-        params.width = GridLayout.LayoutParams.WRAP_CONTENT;
-        params.height = GridLayout.LayoutParams.WRAP_CONTENT;
-
-        this.gridView.setLayoutParams(params);
-
-
-        for (int i = 0; i < 81 ; ++i) {
-            TextView tv = new TextView(this);
-            tv.setId(i);
-            tv.setText(" ");
-            tv.setTextSize(20);
-            tv.setGravity(1);
-
-            if (DEBUG_CELL) {
-                tv.setTextColor(Color.WHITE);
-                tv.setBackgroundColor(Color.BLACK);
-            } else {
-                tv.setTextColor(Color.BLACK);
-                tv.setBackgroundColor(Color.TRANSPARENT);
-            }
-            int step = (SIZE / 9)-2;
-            tv.setWidth(step);
-            tv.setHeight(step);
-            int padding = 0;
-            tv.setPadding(padding, padding, padding, padding);
-            GridLayout.LayoutParams params1 = new GridLayout.LayoutParams();
-            int margin = 1;
-            params1.setMargins( margin, margin, margin, margin);
-            tv.setLayoutParams(params1);
-
-            tv.setOnClickListener(v -> {
-                int id = v.getId();
-                int x = id % 9;
-                int y = id / 9;
-
-                // Show a message with number of the cell clicked
-//                Toast.makeText(this, "Cell " + id, Toast.LENGTH_SHORT).show();
-
-                // Show a dialog to enter a number
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Modifier la case");
-                builder.setMessage("Entrez un chiffre entre 1 et 9 \n Numéro de la case : " + game.getGrid().get(x,y) + ".");
-
-                // Create Layout for the form
-                LinearLayout ll_form = new LinearLayout(this);
-                ll_form.setOrientation(LinearLayout.VERTICAL);
-
-                // Create EditText
-                TextView tv_form = new TextView(this);
-                tv_form.setText(R.string.chiffre);
-                ll_form.addView(tv_form);
-
-                EditText et_form = new EditText(this);
-                ll_form.addView(et_form);
-
-                builder.setView(ll_form);
-
-                builder.setPositiveButton("Valider", (dialog, which) -> {
-                    String value = et_form.getText().toString();
-                    if (value.matches("[1-9]")) {
-                        this.playNumber(x, y, Integer.parseInt(value)); // INFO: Save the value in the model (To avoid to be lost when the gridView is redrawn)
-                    } else {
-                        Toast.makeText(this, R.string.choice_number, Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                builder.setNegativeButton(R.string.annuler, (dialog, which) -> dialog.cancel());
-
-                builder.show();
-            });
-
-            this.cells.add(tv);
-            this.gridView.addView(tv);
-        }
-
+        createGrid(getScreenSize()[0]);
     }
 
 
@@ -208,6 +116,88 @@ public class GameActivity extends AppCompatActivity {
         super.onResume();
         drawGrid();
         refreshStateButtons();
+    }
+
+
+
+    protected void createGrid(int gridSize)
+    {
+        setContentView(R.layout.activity_game);
+
+        this.gridView = findViewById(R.id.gridLayout);
+        this.btnRedo = findViewById(R.id.btnRedo);
+        this.btnUndo = findViewById(R.id.btnUndo);
+
+        this.gridView.setBackgroundColor(Color.BLACK);
+
+        for (int i = 0; i < 81 ; ++i) {
+            TextView tv = new TextView(this);
+            tv.setId(i);
+            tv.setText(" ");
+            tv.setTextSize(20);
+            tv.setGravity(1);
+
+            if (DEBUG_CELL) {
+                tv.setTextColor(Color.WHITE);
+                tv.setBackgroundColor(Color.BLACK);
+            } else {
+                tv.setTextColor(Color.BLACK);
+                tv.setBackgroundColor(Color.TRANSPARENT);
+            }
+            int step = (gridSize / 9)-2;
+            tv.setWidth(step);
+            tv.setHeight(step);
+            int padding = 0;
+            tv.setPadding(padding, padding, padding, padding);
+            GridLayout.LayoutParams params1 = new GridLayout.LayoutParams();
+            int margin = 1;
+            params1.setMargins( margin, margin, margin, margin);
+            tv.setLayoutParams(params1);
+
+            tv.setOnClickListener(v -> {
+                int id = v.getId();
+                int x = id % 9;
+                int y = id / 9;
+
+                // Show a message with number of the cell clicked
+                // Toast.makeText(this, "Cell " + id, Toast.LENGTH_SHORT).show();
+
+                // Show a dialog to enter a number
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Modifier la case");
+                builder.setMessage("Entrez un chiffre entre 1 et 9 \n Numéro de la case : " + game.getGrid().get(x,y) + ".");
+
+                // Create Layout for the form
+                LinearLayout ll_form = new LinearLayout(this);
+                ll_form.setOrientation(LinearLayout.VERTICAL);
+
+                // Create EditText
+                TextView tv_form = new TextView(this);
+                tv_form.setText(R.string.chiffre);
+                ll_form.addView(tv_form);
+
+                EditText et_form = new EditText(this);
+                ll_form.addView(et_form);
+
+                builder.setView(ll_form);
+
+                builder.setPositiveButton("Valider", (dialog, which) -> {
+                    String value = et_form.getText().toString();
+                    if (value.matches("[1-9]")) {
+                        this.playNumber(x, y, Integer.parseInt(value)); // INFO: Save the value in the model (To avoid to be lost when the gridView is redrawn)
+                    } else {
+                        Toast.makeText(this, R.string.choice_number, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                builder.setNegativeButton(R.string.annuler, (dialog, which) -> dialog.cancel());
+
+                builder.show();
+            });
+
+            this.cells.add(tv);
+            this.gridView.addView(tv);
+        }
     }
 
 
@@ -296,7 +286,7 @@ public class GameActivity extends AppCompatActivity {
 
 
     /**
-     * Handling the UI event to start a new game
+     * Handle the UI event to start a new game
      */
     public void startNewGame(View v) {
 
