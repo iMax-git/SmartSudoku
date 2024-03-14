@@ -3,7 +3,6 @@ package com.backtracking.smartsudoku;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -13,11 +12,9 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.backtracking.smartsudoku.models.Game;
 import com.backtracking.smartsudoku.models.ImmutableGrid;
@@ -38,7 +35,7 @@ public class GameActivity extends AppCompatActivity {
 
     GridLayout gridView;
 
-    LinearLayout ll_number_list;
+    LinearLayout view_keyboard;
 
     Button btnUndo, btnRedo;
 
@@ -47,6 +44,9 @@ public class GameActivity extends AppCompatActivity {
     List<TextView> cells = new ArrayList<>();
 
     Integer SIZE;
+
+    Integer[] selectedCell = new Integer[2];
+    ImmutableGrid defaultGrid;
 
     Game game = new Game();
     Difficulty difficulty = Difficulty.MEDIUM;
@@ -70,7 +70,7 @@ public class GameActivity extends AppCompatActivity {
         SIZE = screenSize[0]-100;
         setContentView(R.layout.activity_game);
         this.gridView = findViewById(R.id.gridLayout);
-        this.ll_number_list = findViewById(R.id.ll_number_list);
+        this.view_keyboard = findViewById(R.id.view_keyboard);
         this.btnRedo = findViewById(R.id.btnRedo);
         this.btnUndo = findViewById(R.id.btnUndo);
 
@@ -111,77 +111,42 @@ public class GameActivity extends AppCompatActivity {
                 int id = v.getId();
                 int x = id % 9;
                 int y = id / 9;
+                if (this.defaultGrid.get(x,y) != 0) {
+                    System.out.println(this.defaultGrid.get(x,y) + " is a default cell");
+                    return;
+                }
+                if (selectedCell[0] != null) {
+                    cells.get(selectedCell[0] + selectedCell[1] * 9).setBackground(shapeBaseDrawable);
+                }
+                selectedCell[0] = x;
+                selectedCell[1] = y;
+                cells.get(id).setBackground(shapeSelectedDrawable);
 
-                // Show a message with number of the cell clicked
-//                Toast.makeText(this, "Cell " + id, Toast.LENGTH_SHORT).show();
+                this.view_keyboard.setVisibility(View.VISIBLE);
+            });
 
-                // Show a dialog to enter a number
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Modifier la case");
-                builder.setMessage("Entrez un chiffre entre 1 et 9 \n Numéro de la case : " + game.getGrid().get(x,y) + ".");
+            tv.setOnLongClickListener((v) -> {
+                // Remove number
+                int id = v.getId();
+                int x = id % 9;
+                int y = id / 9;
+                if (this.defaultGrid.get(x,y) != 0) {
+                    return true;
+                }
+                playNumber(x, y, 0);
+                this.view_keyboard.setVisibility(View.GONE);
+                if (selectedCell[0] != null) {
+                    cells.get(selectedCell[0] + selectedCell[1] * 9).setBackground(shapeBaseDrawable);
+                }
 
-                // Create Layout for the form
-                LinearLayout ll_form = new LinearLayout(this);
-                ll_form.setOrientation(LinearLayout.VERTICAL);
-
-                // Create EditText
-                TextView tv_form = new TextView(this);
-                tv_form.setText(R.string.chiffre);
-                ll_form.addView(tv_form);
-
-                EditText et_form = new EditText(this);
-                ll_form.addView(et_form);
-
-                builder.setView(ll_form);
-
-                builder.setPositiveButton("Valider", (dialog, which) -> {
-                    String value = et_form.getText().toString();
-                    if (value.matches("[1-9]")) {
-                        this.playNumber(x, y, Integer.parseInt(value)); // INFO: Save the value in the model (To avoid to be lost when the gridView is redrawn)
-                    } else {
-                        Toast.makeText(this, R.string.choice_number, Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                builder.setNegativeButton(R.string.annuler, (dialog, which) -> dialog.cancel());
-
-                builder.show();
+                return true;
             });
 
             this.cells.add(tv);
             this.gridView.addView(tv);
         }
+        this.setupKeyboard();
 
-
-        for (int j = 0; j < 9; ++j) {
-            TextView tv_number = new TextView(this);
-            tv_number.setText(String.valueOf(j+1));
-            tv_number.setTextSize(20);
-            tv_number.setGravity(1);
-            tv_number.setWidth(60);
-            tv_number.setHeight(60);
-            tv_number.setPadding(5, 5, 5, 5);
-
-            if (Math.random() > 0.5) {
-                tv_number.setBackgroundColor(Color.GRAY);
-                tv_number.setTextColor(Color.BLACK);
-            } else {
-                tv_number.setBackgroundColor(Color.WHITE);
-                tv_number.setTextColor(Color.BLACK);
-            }
-
-            // set margin
-            GridLayout.LayoutParams params2 = new GridLayout.LayoutParams();
-            params2.setMargins(5, 5, 5, 5);
-            tv_number.setLayoutParams(params2);
-
-
-            tv_number.setOnClickListener(v -> {
-                Toast.makeText(this, "Number " + tv_number.getText(), Toast.LENGTH_SHORT).show();
-                //tv.setText(tv_number.getText());
-            });
-            ll_number_list.addView(tv_number);
-        }
     }
 
 
@@ -194,6 +159,7 @@ public class GameActivity extends AppCompatActivity {
         SharedPreferences.Editor storeEditor = saveStore.edit();
         if (!game.isWon()) {
             storeEditor.putString("gameStates", game.serialize());
+            storeEditor.putString("defaultGrid", defaultGrid.serialize());
         } else {
             storeEditor.remove("gameStates");
         }
@@ -214,8 +180,10 @@ public class GameActivity extends AppCompatActivity {
         // check save store for interrupted game and restore it if present
         SharedPreferences save = getSharedPreferences("save", 0);
         String gameStates = save.getString("gameStates", "");
-        if (!gameStates.isEmpty()) {
+        String defaultGrid = save.getString("defaultGrid", "");
+        if (!gameStates.isEmpty() && !defaultGrid.isEmpty()) {
             this.game = Game.deserialize(gameStates);
+            this.defaultGrid = ImmutableGrid.deserialize(defaultGrid);
         } else { // no game saved
             startNewGame(this.difficulty);
         }
@@ -296,7 +264,7 @@ public class GameActivity extends AppCompatActivity {
         shapeDefaultDrawable.getPaint().setDither(true);
         shapeDefaultDrawable.getPaint().setStrokeJoin(Paint.Join.ROUND);
 
-        shapeSelectedDrawable.getPaint().setColor(Color.parseColor("#FF9000"));
+        shapeSelectedDrawable.getPaint().setColor(Color.parseColor("#14a7fc"));
         shapeSelectedDrawable.getPaint().setStyle(Paint.Style.FILL_AND_STROKE);
         shapeSelectedDrawable.getPaint().setStrokeWidth(1);
         shapeSelectedDrawable.getPaint().setAntiAlias(true);
@@ -346,6 +314,7 @@ public class GameActivity extends AppCompatActivity {
                 generator.removeNumbers(56);
                 break;
         }
+        this.defaultGrid = generator.getGrid();
         this.game = new Game(generator.getGrid(), solution);
         this.difficulty = difficulty;
         drawGrid();
@@ -413,8 +382,36 @@ public class GameActivity extends AppCompatActivity {
 
     protected void setupInteractiveCells() {
         for (int i=0; i<gridView.getChildCount(); ++i) {
-            View cellView = gridView.getChildAt(i);
-            cellView.setEnabled(game.getBaseGrid().get(i) == 0);
+            //View cellView = gridView.getChildAt(i);
+            //cellView.setEnabled(game.getBaseGrid().get(i) == 0);
+            this.cells.get(i).setEnabled(game.getBaseGrid().get(i) == 0);
+
+        }
+    }
+
+    private void setupKeyboard() {
+        /*
+        Dispose keyboard buttons in a 3x3 grid
+            1 2 3
+            4 5 6
+            7 8 9
+         */
+
+
+        GridLayout keyboard = findViewById(R.id.keyboard);
+        for (int i=1; i<=9; ++i) {
+            Button btn = new Button(this);
+            btn.setText(String.valueOf(i));
+            btn.setId(i);
+            btn.setOnClickListener(v -> {
+                int id = v.getId();
+                int x = selectedCell[0];
+                int y = selectedCell[1];
+                playNumber(x, y, id);
+                view_keyboard.setVisibility(View.GONE);
+            });
+            view_keyboard.setVisibility(View.GONE);
+            keyboard.addView(btn);
         }
     }
 
