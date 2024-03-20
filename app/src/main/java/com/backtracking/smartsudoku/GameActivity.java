@@ -80,31 +80,6 @@ public class GameActivity extends AppCompatActivity {
     }
 
 
-    class RootLayoutChangeListener implements View.OnLayoutChangeListener {
-        @Override
-        public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-            rootLayout.removeOnLayoutChangeListener(this);
-            System.out.printf("~ layoutChange ~> %d\n", right-left);
-            final int gridWidth = right-left;
-            createGrid(gridWidth);
-            gridContainer.setMinimumHeight(gridWidth);
-            drawGrid();
-        }
-    }
-
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration config) {
-        super.onConfigurationChanged(config);
-
-        this.rootLayout.setOrientation(config.orientation==Configuration.ORIENTATION_LANDSCAPE ?
-                LinearLayout.HORIZONTAL : LinearLayout.VERTICAL);
-
-        rootLayout.addOnLayoutChangeListener(new RootLayoutChangeListener());
-        rootLayout.requestLayout();
-    }
-
-
     @Override
     protected void onStop() {
         super.onStop();
@@ -158,6 +133,30 @@ public class GameActivity extends AppCompatActivity {
         rootLayout.requestLayout();
         refreshStateButtons();
         setupInteractiveCells();
+    }
+
+
+    class RootLayoutChangeListener implements View.OnLayoutChangeListener {
+        @Override
+        public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+            rootLayout.removeOnLayoutChangeListener(this);
+            final int gridWidth = right-left;
+            createGrid(gridWidth);
+            gridContainer.setMinimumHeight(gridWidth);
+            drawGrid();
+        }
+    }
+
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration config) {
+        super.onConfigurationChanged(config);
+
+        this.rootLayout.setOrientation(config.orientation==Configuration.ORIENTATION_LANDSCAPE ?
+                LinearLayout.HORIZONTAL : LinearLayout.VERTICAL);
+
+        rootLayout.addOnLayoutChangeListener(new RootLayoutChangeListener());
+        rootLayout.requestLayout();
     }
 
 
