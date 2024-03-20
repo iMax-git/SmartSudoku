@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.ShapeDrawable;
@@ -68,16 +69,26 @@ public class GameActivity extends AppCompatActivity {
         this.gridView = findViewById(R.id.gridLayout);
         this.btnRedo = findViewById(R.id.btnRedo);
         this.btnUndo = findViewById(R.id.btnUndo);
-        this.gridContainer.addOnLayoutChangeListener((
-                View v,
-                int left, int top, int right, int bottom,
-                int oldLeft, int oldTop, int oldRight, int oldBottom) ->
-        {
-            System.out.printf("===> %d %d %d %d\n===> %d %d %d %d\n",
-                    left, top, right, bottom,
-                    oldLeft, oldTop, oldRight, oldBottom);
-            createGrid(getScreenSize()[0]);
-        });
+    }
+
+
+    class GridLayoutChangeListener implements View.OnLayoutChangeListener {
+        @Override
+        public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+            gridContainer.removeOnLayoutChangeListener(this);
+            System.out.printf("~ layoutChange ~> %d\n", right-left); // DBG
+            final int gridWidth = right-left;
+            createGrid(gridWidth);
+            drawGrid();
+        }
+    }
+
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration config) {
+        super.onConfigurationChanged(config);
+        gridContainer.addOnLayoutChangeListener(new GridLayoutChangeListener());
+        gridContainer.requestLayout();
     }
 
 
@@ -130,7 +141,8 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        drawGrid();
+        gridContainer.addOnLayoutChangeListener(new GridLayoutChangeListener());
+        gridContainer.requestLayout();
         refreshStateButtons();
     }
 
@@ -138,6 +150,7 @@ public class GameActivity extends AppCompatActivity {
 
     protected void createGrid(int gridSize)
     {
+        this.gridView.removeAllViewsInLayout();
         this.gridView.setBackgroundColor(Color.BLACK);
 
         for (int i = 0; i < 81 ; ++i) {
@@ -201,7 +214,6 @@ public class GameActivity extends AppCompatActivity {
                 });
 
                 builder.setNegativeButton(R.string.annuler, (dialog, which) -> dialog.cancel());
-
                 builder.show();
             });
 
@@ -217,7 +229,7 @@ public class GameActivity extends AppCompatActivity {
         ImmutableGrid baseGrid = game.getBaseGrid();
 
         for (int i = 0; i < 81; ++i) {
-            TextView cellView = cells.get(i);
+            TextView cellView = (TextView) this.gridView.getChildAt(i);
             int cellNumber = grid.get(i);
             if (cellNumber!=0) {
                 cellView.setText(String.valueOf(cellNumber));
@@ -338,11 +350,6 @@ public class GameActivity extends AppCompatActivity {
         drawGrid();
         setupInteractiveCells();
         refreshStateButtons();
-
-        // DEBUG
-        System.out.println(game.getBaseGrid());
-        System.out.println();
-        System.out.println(game.getSolution());
     }
 
 
