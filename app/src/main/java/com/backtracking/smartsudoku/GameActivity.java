@@ -157,6 +157,7 @@ public class GameActivity extends AppCompatActivity {
         rootLayout.addOnLayoutChangeListener(new RootLayoutChangeListener());
         rootLayout.requestLayout();
         refreshStateButtons();
+        setupInteractiveCells();
     }
 
 
@@ -242,7 +243,6 @@ public class GameActivity extends AppCompatActivity {
 
 
     protected void drawGrid() {
-
         ImmutableGrid grid = game.getGrid();
         ImmutableGrid baseGrid = game.getBaseGrid();
 
@@ -256,7 +256,6 @@ public class GameActivity extends AppCompatActivity {
             }
             if (baseGrid.get(i)!=0) {
                 cellView.setBackground(shapeDefaultDrawable);
-
             } else {
                 cellView.setBackground(shapeBaseDrawable);
             }
@@ -366,7 +365,6 @@ public class GameActivity extends AppCompatActivity {
         this.game = new Game(generator.getGrid(), solution);
         this.difficulty = difficulty;
         drawGrid();
-        setupInteractiveCells();
         refreshStateButtons();
     }
 
@@ -425,12 +423,10 @@ public class GameActivity extends AppCompatActivity {
 
     protected void setupInteractiveCells() {
         for (int i=0; i<gridView.getChildCount(); ++i) {
-            //View cellView = gridView.getChildAt(i);
-            //cellView.setEnabled(game.getBaseGrid().get(i) == 0);
             this.cells.get(i).setEnabled(game.getBaseGrid().get(i) == 0);
-
         }
     }
+
 
     private void setupKeyboard() {
         /*
