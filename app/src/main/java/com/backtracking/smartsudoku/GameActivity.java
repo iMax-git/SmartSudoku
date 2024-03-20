@@ -2,6 +2,7 @@ package com.backtracking.smartsudoku;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -39,6 +40,7 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    LinearLayout rootLayout;
     LinearLayout gridContainer;
     GridLayout gridView;
 
@@ -65,6 +67,7 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         defineRects();
+        this.rootLayout = findViewById(R.id.rootLayout);
         this.gridContainer = findViewById(R.id.gridContainer);
         this.gridView = findViewById(R.id.gridLayout);
         this.btnRedo = findViewById(R.id.btnRedo);
@@ -72,13 +75,14 @@ public class GameActivity extends AppCompatActivity {
     }
 
 
-    class GridLayoutChangeListener implements View.OnLayoutChangeListener {
+    class RootLayoutChangeListener implements View.OnLayoutChangeListener {
         @Override
         public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-            gridContainer.removeOnLayoutChangeListener(this);
-            System.out.printf("~ layoutChange ~> %d\n", right-left); // DBG
+            rootLayout.removeOnLayoutChangeListener(this);
+            System.out.printf("~ layoutChange ~> %d\n", right-left);
             final int gridWidth = right-left;
             createGrid(gridWidth);
+            gridContainer.setMinimumHeight(gridWidth);
             drawGrid();
         }
     }
@@ -87,8 +91,12 @@ public class GameActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(@NonNull Configuration config) {
         super.onConfigurationChanged(config);
-        gridContainer.addOnLayoutChangeListener(new GridLayoutChangeListener());
-        gridContainer.requestLayout();
+
+        this.rootLayout.setOrientation(config.orientation==Configuration.ORIENTATION_LANDSCAPE ?
+                LinearLayout.HORIZONTAL : LinearLayout.VERTICAL);
+
+        rootLayout.addOnLayoutChangeListener(new RootLayoutChangeListener());
+        rootLayout.requestLayout();
     }
 
 
@@ -141,8 +149,8 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        gridContainer.addOnLayoutChangeListener(new GridLayoutChangeListener());
-        gridContainer.requestLayout();
+        rootLayout.addOnLayoutChangeListener(new RootLayoutChangeListener());
+        rootLayout.requestLayout();
         refreshStateButtons();
     }
 
