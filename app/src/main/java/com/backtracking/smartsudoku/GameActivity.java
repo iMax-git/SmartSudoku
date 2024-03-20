@@ -373,10 +373,8 @@ public class GameActivity extends AppCompatActivity {
             game.setNumber(x, y, value);
             if (game.isWon()) {
                 setGridViewEnabled(false);
-                setStateButtonsEnabled(false);
-            } else {
-                refreshStateButtons();
             }
+            refreshStateButtons();
             drawGrid();
         }
     }
@@ -401,14 +399,13 @@ public class GameActivity extends AppCompatActivity {
 
 
     protected void refreshStateButtons() {
-        btnUndo.setEnabled(game.isUndoable());
-        btnRedo.setEnabled(game.isRedoable());
-    }
-
-
-    protected void setStateButtonsEnabled(boolean enabled) {
-        btnUndo.setEnabled(enabled);
-        btnRedo.setEnabled(enabled);
+        if (!game.isWon()) {
+            btnUndo.setEnabled(game.isUndoable());
+            btnRedo.setEnabled(game.isRedoable());
+        } else {
+            btnUndo.setEnabled(false);
+            btnRedo.setEnabled(false);
+        }
     }
 
 
