@@ -129,8 +129,10 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        rootLayout.addOnLayoutChangeListener(new RootLayoutChangeListener());
-        rootLayout.requestLayout();
+        createGrid(getScreenSize()[0]-150);
+        drawGrid();
+//        rootLayout.addOnLayoutChangeListener(new RootLayoutChangeListener());
+//        rootLayout.requestLayout();
         refreshStateButtons();
         setupInteractiveCells();
     }
