@@ -2,7 +2,6 @@ package com.backtracking.smartsudoku;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -16,12 +15,10 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.backtracking.smartsudoku.models.Game;
 import com.backtracking.smartsudoku.models.ImmutableGrid;
@@ -44,11 +41,17 @@ public class GameActivity extends AppCompatActivity {
     LinearLayout gridContainer;
     GridLayout gridView;
 
+    LinearLayout view_keyboard;
+
     ImageButton btnUndo, btnRedo;
 
     boolean DEBUG_CELL = false;
 
     List<TextView> cells = new ArrayList<>();
+
+    Integer SIZE;
+
+    Integer[] selectedCell = new Integer[2];
 
     Game game = new Game();
     Difficulty difficulty = Difficulty.MEDIUM;
@@ -70,8 +73,10 @@ public class GameActivity extends AppCompatActivity {
         this.rootLayout = findViewById(R.id.rootLayout);
         this.gridContainer = findViewById(R.id.gridContainer);
         this.gridView = findViewById(R.id.gridLayout);
+        this.view_keyboard = findViewById(R.id.view_keyboard);
         this.btnRedo = findViewById(R.id.btnRedo);
         this.btnUndo = findViewById(R.id.btnUndo);
+        this.setupKeyboard();
     }
 
 
@@ -198,31 +203,36 @@ public class GameActivity extends AppCompatActivity {
                 builder.setTitle("Modifier la case");
                 builder.setMessage("Entrez un chiffre entre 1 et 9 \n Numéro de la case : " + game.getGrid().get(x,y) + ".");
 
-                // Create Layout for the form
-                LinearLayout ll_form = new LinearLayout(this);
-                ll_form.setOrientation(LinearLayout.VERTICAL);
+                ImmutableGrid baseGrid = game.getBaseGrid();
 
-                // Create EditText
-                TextView tv_form = new TextView(this);
-                tv_form.setText(R.string.chiffre);
-                ll_form.addView(tv_form);
+                if (baseGrid.get(x,y) != 0) {
+                    System.out.println(baseGrid.get(x,y) + " is a default cell");
+                    return;
+                }
+                if (selectedCell[0] != null) {
+                    cells.get(selectedCell[0] + selectedCell[1] * 9).setBackground(shapeBaseDrawable);
+                }
+                selectedCell[0] = x;
+                selectedCell[1] = y;
+                cells.get(id).setBackground(shapeSelectedDrawable);
 
-                EditText et_form = new EditText(this);
-                ll_form.addView(et_form);
+                this.view_keyboard.setVisibility(View.VISIBLE);
+            });
 
-                builder.setView(ll_form);
-
-                builder.setPositiveButton("Valider", (dialog, which) -> {
-                    String value = et_form.getText().toString();
-                    if (value.matches("[1-9]")) {
-                        this.playNumber(x, y, Integer.parseInt(value)); // INFO: Save the value in the model (To avoid to be lost when the gridView is redrawn)
-                    } else {
-                        Toast.makeText(this, R.string.choice_number, Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-                builder.setNegativeButton(R.string.annuler, (dialog, which) -> dialog.cancel());
-                builder.show();
+            tv.setOnLongClickListener((v) -> {
+                // Remove number
+                int id = v.getId();
+                int x = id % 9;
+                int y = id / 9;
+                if (game.getBaseGrid().get(x,y) != 0) {
+                    return true;
+                }
+                playNumber(x, y, 0);
+                this.view_keyboard.setVisibility(View.GONE);
+                if (selectedCell[0] != null) {
+                    cells.get(selectedCell[0] + selectedCell[1] * 9).setBackground(shapeBaseDrawable);
+                }
+                return true;
             });
 
             this.cells.add(tv);
@@ -288,7 +298,7 @@ public class GameActivity extends AppCompatActivity {
         shapeDefaultDrawable.getPaint().setDither(true);
         shapeDefaultDrawable.getPaint().setStrokeJoin(Paint.Join.ROUND);
 
-        shapeSelectedDrawable.getPaint().setColor(Color.parseColor("#FF9000"));
+        shapeSelectedDrawable.getPaint().setColor(Color.parseColor("#14a7fc"));
         shapeSelectedDrawable.getPaint().setStyle(Paint.Style.FILL_AND_STROKE);
         shapeSelectedDrawable.getPaint().setStrokeWidth(1);
         shapeSelectedDrawable.getPaint().setAntiAlias(true);
@@ -415,8 +425,35 @@ public class GameActivity extends AppCompatActivity {
 
     protected void setupInteractiveCells() {
         for (int i=0; i<gridView.getChildCount(); ++i) {
-            View cellView = gridView.getChildAt(i);
-            cellView.setEnabled(game.getBaseGrid().get(i) == 0);
+            //View cellView = gridView.getChildAt(i);
+            //cellView.setEnabled(game.getBaseGrid().get(i) == 0);
+            this.cells.get(i).setEnabled(game.getBaseGrid().get(i) == 0);
+
+        }
+    }
+
+    private void setupKeyboard() {
+        /*
+        Dispose keyboard buttons in a 3x3 grid
+            1 2 3
+            4 5 6
+            7 8 9
+         */
+
+        GridLayout keyboard = findViewById(R.id.keyboard);
+        for (int i=1; i<=9; ++i) {
+            Button btn = new Button(this);
+            btn.setText(String.valueOf(i));
+            btn.setId(i);
+            btn.setOnClickListener(v -> {
+                int id = v.getId();
+                int x = selectedCell[0];
+                int y = selectedCell[1];
+                playNumber(x, y, id);
+                view_keyboard.setVisibility(View.GONE);
+            });
+            view_keyboard.setVisibility(View.GONE);
+            keyboard.addView(btn);
         }
     }
 

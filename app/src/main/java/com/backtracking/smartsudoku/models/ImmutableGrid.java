@@ -140,4 +140,26 @@ public class ImmutableGrid {
         ImmutableGrid grid = (ImmutableGrid) obj;
         return Arrays.equals(this.cells, grid.cells);
     }
+
+    /**
+     * Serialize the grid to a string
+     */
+    public String serialize() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 81; ++i) {
+            sb.append(Character.forDigit((char) this.cells[i], 10));
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Deserialize the grid from a string
+     */
+    public static ImmutableGrid deserialize(String str) {
+        byte[] cells = new byte[81];
+        for (int i = 0; i < 81; ++i) {
+            cells[i] = (byte) Character.digit(str.charAt(i), 10);
+        }
+        return new ImmutableGrid(cells);
+    }
 }
