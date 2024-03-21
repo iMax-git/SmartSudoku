@@ -13,6 +13,7 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
@@ -42,6 +43,7 @@ public class GameActivity extends AppCompatActivity {
     GridLayout gridView;
 
     LinearLayout view_keyboard;
+    LinearLayout end_menu;
 
     ImageButton btnUndo, btnRedo;
 
@@ -74,6 +76,7 @@ public class GameActivity extends AppCompatActivity {
         this.gridContainer = findViewById(R.id.gridContainer);
         this.gridView = findViewById(R.id.gridLayout);
         this.view_keyboard = findViewById(R.id.view_keyboard);
+        this.end_menu = findViewById(R.id.endGameMenu);
         this.btnRedo = findViewById(R.id.btnRedo);
         this.btnUndo = findViewById(R.id.btnUndo);
         this.setupKeyboard();
@@ -112,6 +115,7 @@ public class GameActivity extends AppCompatActivity {
         if (!gameStates.isEmpty()) {
             this.game = Game.deserialize(gameStates);
         } else { // no game saved
+            createGrid(getScreenSize()[0]-150);
             startNewGame(this.difficulty);
         }
     }
@@ -225,6 +229,8 @@ public class GameActivity extends AppCompatActivity {
                 if (game.getBaseGrid().get(x,y) != 0) {
                     return true;
                 }
+                selectedCell[0] = x;
+                selectedCell[1] = y;
                 playNumber(x, y, 0);
                 this.view_keyboard.setVisibility(View.GONE);
                 if (selectedCell[0] != null) {
@@ -348,8 +354,8 @@ public class GameActivity extends AppCompatActivity {
         ImmutableGrid solution = generator.getGrid();
         switch (difficulty) {
             case EASY:
-                generator.removeNumbers(25);
-//                generator.removeNumbers(1); // to DEBUG win condition
+//                generator.removeNumbers(25);
+                generator.removeNumbers(1); // to DEBUG win condition
                 break;
             case MEDIUM:
                 generator.removeNumbers(37);
@@ -364,6 +370,8 @@ public class GameActivity extends AppCompatActivity {
         drawGrid();
         refreshStateButtons();
         setupInteractiveCells(); // Réactivation des cellules interactives
+        setValuesToDefault();
+
     }
 
 
@@ -371,7 +379,9 @@ public class GameActivity extends AppCompatActivity {
         if (!game.isWon()) {
             game.setNumber(x, y, value);
             if (game.isWon()) {
+                System.out.println("Game won!");
                 setGridViewEnabled(false);
+                endGame();
             }
             refreshStateButtons();
             drawGrid();
@@ -447,5 +457,25 @@ public class GameActivity extends AppCompatActivity {
             keyboard.addView(btn);
         }
     }
+
+    public void setValuesToDefault() {
+        selectedCell[0] = null; selectedCell[1] = null;
+        this.end_menu.setVisibility(View.GONE);
+        this.view_keyboard.setVisibility(View.GONE);
+    }
+
+    public void endGame() {
+
+        Button btnNewGame = findViewById(R.id.btnNewGameEnd);
+        btnNewGame.setOnClickListener(v -> {
+            startNewGame(this.gridView);
+        });
+
+
+        this.end_menu.setVisibility(View.VISIBLE);
+
+    }
+
+
 
 }

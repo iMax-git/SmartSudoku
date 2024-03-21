@@ -92,4 +92,48 @@
             />
     </LinearLayout>
 
+
+    <!-- End Game Menu Center Under All items -->
+    <LinearLayout
+        android:id="@+id/endGameMenu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:background="@drawable/end_menu"
+        android:gravity="center"
+        android:stateListAnimator="@animator/end_menu_show_animator"
+
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Félicitations ! Vous avez gagné !"
+            android:textSize="18sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+
+
+
+            />
+        <Button
+            android:id="@+id/btnNewGameEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nouvelle partie"
+            android:drawableLeft="@drawable/plus_solid"
+            android:stateListAnimator="@animator/button_hover_animator"
+            android:onClick="startNewGame"
+            />
+
+
+    </LinearLayout>
 </LinearLayout>
