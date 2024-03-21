@@ -199,11 +199,7 @@ public class GameActivity extends AppCompatActivity {
 
                 // Show a message with number of the cell clicked
                 // Toast.makeText(this, "Cell " + id, Toast.LENGTH_SHORT).show();
-
-                // Show a dialog to enter a number
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Modifier la case");
-                builder.setMessage("Entrez un chiffre entre 1 et 9 \n Numéro de la case : " + game.getGrid().get(x,y) + ".");
+                System.out.println("Cell " + id + " clicked" + " x: " + x + " y: " + y);
 
                 ImmutableGrid baseGrid = game.getBaseGrid();
 
@@ -367,6 +363,7 @@ public class GameActivity extends AppCompatActivity {
         this.difficulty = difficulty;
         drawGrid();
         refreshStateButtons();
+        setupInteractiveCells(); // Réactivation des cellules interactives
     }
 
 
