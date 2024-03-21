@@ -9,7 +9,25 @@
     tools:context=".GameActivity"
     android:id="@+id/rootLayout">
 
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
 
+        <!-- Settings icon -->
+        <ImageButton
+            android:id="@+id/btnSettings"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#00FFFFFF"
+            android:contentDescription="@string/settingsbutton"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/gear_solid" />
+
+    </LinearLayout>
     <!-- Grid -->
     <LinearLayout
         android:id="@+id/gridContainer"

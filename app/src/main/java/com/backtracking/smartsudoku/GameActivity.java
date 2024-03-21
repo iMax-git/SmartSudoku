@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -40,6 +41,7 @@ public class GameActivity extends AppCompatActivity {
     LinearLayout rootLayout;
     LinearLayout gridContainer;
     GridLayout gridView;
+    ImageButton btnSettings;
 
     LinearLayout view_keyboard;
 
@@ -74,9 +76,12 @@ public class GameActivity extends AppCompatActivity {
         this.gridContainer = findViewById(R.id.gridContainer);
         this.gridView = findViewById(R.id.gridLayout);
         this.view_keyboard = findViewById(R.id.view_keyboard);
+        this.btnSettings = findViewById(R.id.btnSettings);
         this.btnRedo = findViewById(R.id.btnRedo);
         this.btnUndo = findViewById(R.id.btnUndo);
         this.setupKeyboard();
+
+        this.btnSettings.setOnClickListener(v -> buttonSwitchActivity(v, SettingsActivity.class));
     }
 
 
@@ -449,6 +454,12 @@ public class GameActivity extends AppCompatActivity {
             view_keyboard.setVisibility(View.GONE);
             keyboard.addView(btn);
         }
+    }
+
+
+    private void buttonSwitchActivity(View v, Class<?> activity) {
+        Intent intent = new Intent(this, activity);
+        startActivity(intent);
     }
 
 }

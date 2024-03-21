@@ -7,4 +7,15 @@
     <string name="undo">undo</string>
     <string name="redo">redo</string>
     <string name="new_game">new game</string>
+    <string name="settings_title">Paramètres</string>
+    <string name="general_settings_title">Général</string>
+    <string name="notifications_enabled_title">Notification actif</string>
+    <string name="notifications_enabled_summary">Activer les notifications</string>
+    <string name="theme_title">Thèmes</string>
+    <string name="theme_summary">Sélectionner le thème.</string>
+    <string name="theme_default_value">1</string>
+    <string name="advanced_settings_title">Avancé</string>
+    <string name="debug_mode_title">Mode debug</string>
+    <string name="debug_mode_summary">Voir des choses étranges ?</string>
+    <string name="settingsbutton">SettingsButton</string>
 </resources>
