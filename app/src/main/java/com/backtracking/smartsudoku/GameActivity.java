@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -13,7 +12,6 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
@@ -25,7 +23,6 @@ import com.backtracking.smartsudoku.models.Game;
 import com.backtracking.smartsudoku.models.ImmutableGrid;
 import com.backtracking.smartsudoku.models.SudokuGenerator;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,13 +48,12 @@ public class GameActivity extends AppCompatActivity {
 
     List<TextView> cells = new ArrayList<>();
 
-    Integer SIZE;
 
     Integer[] selectedCell = new Integer[2];
 
     Game game = new Game();
     Difficulty difficulty = Difficulty.MEDIUM;
-    LocalDateTime timer = LocalDateTime.now();
+    //LocalDateTime timer = LocalDateTime.now();
 
     /**
      * Forme pour les rectangles des cellules par défaut(initialement défini, sélectionnées et de base
