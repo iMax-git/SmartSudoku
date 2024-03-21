@@ -43,7 +43,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="#00FFFFFF"
-            android:contentDescription="UndoButton"
+            android:contentDescription="@string/undobutton"
             android:onClick="undo"
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/image_button_undo_selector" />
@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="#00FFFFFF"
-            android:contentDescription="RedoButton"
+            android:contentDescription="@string/redobutton"
             android:onClick="redo"
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/image_button_redo_selector" />
@@ -65,7 +65,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="#00FFFFFF"
-            android:contentDescription="StartGame"
+            android:contentDescription="@string/startgame"
             android:onClick="startNewGame"
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/new_game_btn" />
@@ -113,7 +113,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Félicitations ! Vous avez gagné !"
+            android:text="@string/end_message"
             android:textSize="18sp"
             android:textColor="@color/black"
             android:layout_marginTop="16dp"
@@ -128,7 +128,7 @@
             android:id="@+id/btnNewGameEnd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nouvelle partie"
+            android:text="@string/new_game"
             android:drawableLeft="@drawable/plus_solid"
             android:stateListAnimator="@animator/button_hover_animator"
             android:onClick="startNewGame"

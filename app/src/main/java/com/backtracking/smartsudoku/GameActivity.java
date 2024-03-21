@@ -337,12 +337,10 @@ public class GameActivity extends AppCompatActivity {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Choisissez une difficulté")
-                .setItems(difficulties, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // 'which' correspond à l'index de l'élément sélectionné
-                        // Démarrez ici votre jeu avec la difficulté choisie
-                        startNewGame(Difficulty.fromInt(which));
-                    }
+                .setItems(difficulties, (dialog, which) -> {
+                    // 'which' correspond à l'index de l'élément sélectionné
+                    // Démarrez ici votre jeu avec la difficulté choisie
+                    startNewGame(Difficulty.fromInt(which));
                 });
         builder.create().show();
 
@@ -467,9 +465,7 @@ public class GameActivity extends AppCompatActivity {
     public void endGame() {
 
         Button btnNewGame = findViewById(R.id.btnNewGameEnd);
-        btnNewGame.setOnClickListener(v -> {
-            startNewGame(this.gridView);
-        });
+        btnNewGame.setOnClickListener(v -> startNewGame(this.gridView));
 
 
         this.end_menu.setVisibility(View.VISIBLE);
