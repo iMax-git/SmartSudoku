@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
@@ -23,6 +25,7 @@ import com.backtracking.smartsudoku.models.Game;
 import com.backtracking.smartsudoku.models.ImmutableGrid;
 import com.backtracking.smartsudoku.models.SudokuGenerator;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +41,7 @@ public class GameActivity extends AppCompatActivity {
     LinearLayout rootLayout;
     LinearLayout gridContainer;
     GridLayout gridView;
+    ImageButton btnSettings;
 
     LinearLayout view_keyboard;
     LinearLayout end_menu;
@@ -48,12 +52,13 @@ public class GameActivity extends AppCompatActivity {
 
     List<TextView> cells = new ArrayList<>();
 
+    Integer SIZE;
 
     Integer[] selectedCell = new Integer[2];
 
     Game game = new Game();
     Difficulty difficulty = Difficulty.MEDIUM;
-    //LocalDateTime timer = LocalDateTime.now();
+    LocalDateTime timer = LocalDateTime.now();
 
     /**
      * Forme pour les rectangles des cellules par défaut(initialement défini, sélectionnées et de base
@@ -72,10 +77,13 @@ public class GameActivity extends AppCompatActivity {
         this.gridContainer = findViewById(R.id.gridContainer);
         this.gridView = findViewById(R.id.gridLayout);
         this.view_keyboard = findViewById(R.id.view_keyboard);
+        this.btnSettings = findViewById(R.id.btnSettings);
         this.end_menu = findViewById(R.id.endGameMenu);
         this.btnRedo = findViewById(R.id.btnRedo);
         this.btnUndo = findViewById(R.id.btnUndo);
         this.setupKeyboard();
+
+        this.btnSettings.setOnClickListener(v -> buttonSwitchActivity(v, SettingsActivity.class));
     }
 
 
@@ -111,7 +119,6 @@ public class GameActivity extends AppCompatActivity {
         if (!gameStates.isEmpty()) {
             this.game = Game.deserialize(gameStates);
         } else { // no game saved
-            createGrid(getScreenSize()[0]-150);
             startNewGame(this.difficulty);
         }
     }
@@ -469,5 +476,11 @@ public class GameActivity extends AppCompatActivity {
     }
 
 
+
+
+    private void buttonSwitchActivity(View v, Class<?> activity) {
+        Intent intent = new Intent(this, activity);
+        startActivity(intent);
+    }
 
 }

@@ -1,9 +1,22 @@
 <resources>
     <string name="app_name">SmartSudoku</string>
     <string name="default_web_client_id">smart-sudoku-98514</string>
-    <string name="new_game">Nouvelle partie</string>
-    <string name="undobutton">UndoButton</string>
-    <string name="startgame">StartGame</string>
-    <string name="redobutton">RedoButton</string>
-    <string name="end_message">Félicitations ! Vous avez gagné !</string>
+    <string name="chiffre">"Chiffre : "</string>
+    <string name="annuler">Annuler</string>
+    <string name="choice_number">Veuillez entrer un chiffre entre 1 et 9</string>
+    <string name="undo">undo</string>
+    <string name="redo">redo</string>
+    <string name="new_game">new game</string>
+    <string name="end_message">Congratulations</string>
+    <string name="settings_title">Paramètres</string>
+    <string name="general_settings_title">Général</string>
+    <string name="notifications_enabled_title">Notification actif</string>
+    <string name="notifications_enabled_summary">Activer les notifications</string>
+    <string name="theme_title">Thèmes</string>
+    <string name="theme_summary">Sélectionner le thème.</string>
+    <string name="theme_default_value">1</string>
+    <string name="advanced_settings_title">Avancé</string>
+    <string name="debug_mode_title">Mode debug</string>
+    <string name="debug_mode_summary">Voir des choses étranges ?</string>
+    <string name="settingsbutton">SettingsButton</string>
 </resources>
