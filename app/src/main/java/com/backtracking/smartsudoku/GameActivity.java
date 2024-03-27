@@ -85,15 +85,6 @@ public class GameActivity extends AppCompatActivity {
 
         this.btnSettings.setOnClickListener(v -> buttonSwitchActivity(v, SettingsActivity.class));
 
-        SharedPreferences prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
-        String selectedBackground = prefs.getString("selected_background", "fond1"); // "fond1" est la valeur par défaut
-        changeBackground(selectedBackground); // Méthode pour changer le fond
-
-    }
-
-    private void changeBackground(String backgroundName) {
-        int resId = getResources().getIdentifier(backgroundName, "drawable", getPackageName());
-        findViewById(R.id.rootLayout).setBackgroundResource(resId);
     }
 
 

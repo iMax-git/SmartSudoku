@@ -2,6 +2,7 @@ package com.backtracking.smartsudoku;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioGroup;
@@ -14,8 +15,14 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void changeBackground(String backgroundName) {
         int resId = getResources().getIdentifier(backgroundName, "drawable", getPackageName());
-        findViewById(R.id.rootLayout).setBackgroundResource(resId);
+        if (resId != 0) {
+            findViewById(R.id.rootLayout).setBackgroundResource(resId);
+        } else {
+            // Gestion de l'erreur si la ressource n'est pas trouvée
+            Log.e("SettingsActivity", "La ressource de fond n'a pas été trouvée: " + backgroundName);
+        }
     }
+
 
 
     @Override
