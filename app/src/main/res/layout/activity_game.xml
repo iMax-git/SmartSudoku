@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="24dp"
+    android:padding="24dp"
     android:orientation="vertical"
     tools:context=".GameActivity"
-    android:id="@+id/rootLayout">
+    android:id="@+id/rootLayout"
+    android:background="@drawable/fond2">
 
     <!-- Header -->
     <LinearLayout
@@ -25,7 +26,7 @@
             android:background="#00FFFFFF"
             android:contentDescription="@string/settingsbutton"
             android:scaleType="fitCenter"
-            app:srcCompat="@drawable/gear_solid" />
+            app:srcCompat="@drawable/settings" />
 
     </LinearLayout>
     <!-- Grid -->
