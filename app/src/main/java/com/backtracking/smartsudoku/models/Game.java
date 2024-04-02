@@ -94,7 +94,7 @@ public class Game
         this.timer = 0;
     }
 
-    
+
     /*
      * Serialization
      */

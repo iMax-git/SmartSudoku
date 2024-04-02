@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -25,6 +24,7 @@ import com.backtracking.smartsudoku.models.Game;
 import com.backtracking.smartsudoku.models.ImmutableGrid;
 import com.backtracking.smartsudoku.models.SudokuGenerator;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +58,7 @@ public class GameActivity extends AppCompatActivity {
 
     Game game = new Game();
     Difficulty difficulty = Difficulty.MEDIUM;
-    LocalDateTime timer = LocalDateTime.now();
+    LocalDateTime gameStartTime;
 
     /**
      * Forme pour les rectangles des cellules par défaut(initialement défini, sélectionnées et de base
@@ -88,22 +88,6 @@ public class GameActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        // when app closes (either via back button or by the system),
-        // save the current game if it is not finished.
-        SharedPreferences saveStore = getSharedPreferences("save", 0);
-        SharedPreferences.Editor storeEditor = saveStore.edit();
-        if (!game.isWon()) {
-            storeEditor.putString("gameStates", game.serialize());
-        } else {
-            storeEditor.remove("gameStates");
-        }
-        storeEditor.apply();
-    }
-
-
-    @Override
     protected void onStart() {
         super.onStart();
         // restore settings
@@ -128,9 +112,22 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
+        // save settings
         SharedPreferences.Editor settingsEditor = getSharedPreferences("settings",0).edit();
         settingsEditor.putInt("difficulty", difficulty.ordinal());
         settingsEditor.apply();
+
+        // save game
+        SharedPreferences saveStore = getSharedPreferences("save", 0);
+        SharedPreferences.Editor saveEditor = saveStore.edit();
+        if (!game.isWon()) {
+            game.addToTime(Duration.between(this.gameStartTime, LocalDateTime.now()).getSeconds());
+            saveEditor.putString("gameStates", game.serialize());
+        } else {
+            saveEditor.remove("gameStates");
+        }
+        saveEditor.apply();
     }
 
 
@@ -139,10 +136,9 @@ public class GameActivity extends AppCompatActivity {
         super.onResume();
         createGrid(getScreenSize()[0]-150);
         drawGrid();
-//        rootLayout.addOnLayoutChangeListener(new RootLayoutChangeListener());
-//        rootLayout.requestLayout();
         refreshStateButtons();
         setupInteractiveCells();
+        this.gameStartTime = LocalDateTime.now();
     }
 
 
@@ -335,7 +331,6 @@ public class GameActivity extends AppCompatActivity {
      * Handle the UI event to start a new game
      */
     public void startNewGame(View v) {
-
         // Création d'une boîte de dialogue pour choisir la difficulté
         final String[] difficulties = {"EASY", "MEDIUM", "HARD"};
 
@@ -347,7 +342,6 @@ public class GameActivity extends AppCompatActivity {
                     startNewGame(Difficulty.fromInt(which));
                 });
         builder.create().show();
-
     }
 
 
@@ -373,7 +367,7 @@ public class GameActivity extends AppCompatActivity {
         refreshStateButtons();
         setupInteractiveCells(); // Réactivation des cellules interactives
         setValuesToDefault();
-
+        gameStartTime = LocalDateTime.now();
     }
 
 
