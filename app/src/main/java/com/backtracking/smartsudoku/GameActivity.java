@@ -120,6 +120,7 @@ public class GameActivity extends AppCompatActivity {
         if (!gameStates.isEmpty()) {
             this.game = Game.deserialize(gameStates);
         } else { // no game saved
+            createGrid(getScreenSize()[0]-150);
             startNewGame(this.difficulty);
         }
     }
