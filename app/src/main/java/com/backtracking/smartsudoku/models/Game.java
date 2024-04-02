@@ -13,13 +13,14 @@ public class Game
     private Stack<ImmutableGrid> stateStack;
     private Stack<ImmutableGrid> redoStateStack;
     private ImmutableGrid solution;
-
+    private long timer;
 
     public Game() {
         this.stateStack = new Stack<>();
         this.stateStack.push(new ImmutableGrid());
         this.redoStateStack = new Stack<>();
         this.solution = new ImmutableGrid();
+        this.timer = 0;
     }
 
     public Game(@NonNull ImmutableGrid grid, @NonNull ImmutableGrid solution) {
@@ -79,24 +80,58 @@ public class Game
     }
 
 
+    public long getTime() {
+        return this.timer;
+    }
+
+
+    public void addToTime(long seconds) {
+        this.timer += seconds;
+    }
+
+
+    public void resetTime() {
+        this.timer = 0;
+    }
+
+    
     /*
      * Serialization
      */
 
+    /**
+     * Serialized format:
+     *      "undo_stack_grids;redo_stack_grids;timer"
+     *  A grid stack is serialized like this;
+     *      "grid1;grid2;grid3;" etc.
+     *  Example:
+     *      "6010...9025;621...9025;;6110...9025;;124"
+     *          undo^                   redo^     ^timer
+     * @return game state serialized as string.
+     */
     public String serialize() {
-        return Game.serializeState(this.stateStack) +
-                ";" +                                           // -> ";;" between the two strings
-                Game.serializeState(this.redoStateStack);
+        StringBuilder sb = new StringBuilder();
+        sb.append(Game.serializeState(stateStack));
+        sb.append(";"); // gives ;; at the end
+        if (!redoStateStack.isEmpty()) {
+            sb.append(Game.serializeState(redoStateStack));
+            sb.append(";");
+        }
+        sb.append(timer);
+        return sb.toString();
     }
 
 
     public static Game deserialize(final String string) {
         Game game = new Game();
-        String[] stackStrings = string.split(";;");
-        if (stackStrings.length > 0) {
-            game.stateStack = Game.deserializeState(stackStrings[0]);
-            if (stackStrings.length > 1) {
-                game.redoStateStack = Game.deserializeState(stackStrings[1]);
+        String[] strings = string.split(";;");
+        if (strings.length > 0) {
+            game.stateStack = Game.deserializeState(strings[0]);
+            if (strings.length > 1) {
+                game.redoStateStack = Game.deserializeState(strings[1]);
+            }
+            if (strings.length > 2) {
+                game.timer = Long.parseLong(strings[2]);
             }
         }
         return game;
