@@ -4,15 +4,25 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
-import android.widget.RadioGroup;
-import android.widget.Switch;
+import android.widget.Spinner;
+
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.backtracking.smartsudoku.adapter.WallpaperAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SettingsActivity extends AppCompatActivity {
 
     private SharedPreferences prefs;
+
+    private Spinner spinnerWallpaper;
+
+    private List<String> wallpaperList = new ArrayList<>();
+    private List<String> wallpaperLabels = new ArrayList<>();
 
     private void changeBackground(String backgroundName) {
         int resId = getResources().getIdentifier(backgroundName, "drawable", getPackageName());
@@ -25,33 +35,52 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
 
-        // Gestion du choix du fond d'écran
-        RadioGroup radioGroupFond = findViewById(R.id.radioGroupFond);
-        radioGroupFond.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        wallpaperList.add("@drawable/fond1");
+        wallpaperLabels.add("Fond 1");
+        wallpaperList.add("@drawable/fond2");
+        wallpaperLabels.add("Fond 2");
+        wallpaperList.add("@drawable/fond3");
+        wallpaperLabels.add("Fond 3");
+        wallpaperList.add("@drawable/fond4");
+        wallpaperLabels.add("Fond 4");
+        wallpaperList.add("@drawable/fond5");
+        wallpaperLabels.add("Fond 5");
+        wallpaperList.add("@drawable/fond6");
+        wallpaperLabels.add("Fond 6");
+
+        this.spinnerWallpaper = findViewById(R.id.spinnerFond);
+
+        WallpaperAdapter<String> adapter = new WallpaperAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                wallpaperLabels.toArray(new String[0])
+        );
+
+        this.spinnerWallpaper.setAdapter(adapter);
+
+        this.spinnerWallpaper.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String backgroundName = wallpaperList.get(position);
                 SharedPreferences.Editor editor = prefs.edit();
-                String background = "fond1"; // Valeur par défaut
-                if (checkedId == R.id.radioFond1) {
-                    background = "fond1";
-                } else if (checkedId == R.id.radioFond2) {
-                    background = "fond2";
-                }
-                // Continuez avec les autres cas si nécessaire
-
-                editor.putString("selected_background", background);
+                editor.putString("background", backgroundName);
                 editor.apply();
-
-                changeBackground(background); // Appliquer le changement immédiatement
             }
         });
+
+
+
+
+
+
+
+        prefs = getSharedPreferences("AppPrefs", MODE_PRIVATE);
+
 
         ImageButton btnCloseSettings = findViewById(R.id.btnCloseSettings);
         btnCloseSettings.setOnClickListener(new View.OnClickListener() {

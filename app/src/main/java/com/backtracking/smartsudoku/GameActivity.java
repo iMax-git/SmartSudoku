@@ -114,6 +114,16 @@ public class GameActivity extends AppCompatActivity {
         } catch (Exception ex) {
             this.difficulty = Difficulty.MEDIUM;
         }
+
+        try {
+            SharedPreferences background = getSharedPreferences("background", 0);
+            String backgroundName = background.getString("background", "@drawable/fond1");
+            setBackground(backgroundName);
+        } catch (Exception ex) {
+            setBackground("@drawable/fond1");
+        }
+
+
         // check save store for interrupted game and restore it if present
         SharedPreferences save = getSharedPreferences("save", 0);
         String gameStates = save.getString("gameStates", "");
@@ -269,7 +279,6 @@ public class GameActivity extends AppCompatActivity {
             }
         }
     }
-
 
 
 
@@ -483,6 +492,16 @@ public class GameActivity extends AppCompatActivity {
     private void buttonSwitchActivity(View v, Class<?> activity) {
         Intent intent = new Intent(this, activity);
         startActivity(intent);
+    }
+
+    private void updateBackground() {
+        SharedPreferences background = getSharedPreferences("background", 0);
+        String backgroundName = background.getString("background", "@drawable/fond1");
+        setBackground(backgroundName);
+    }
+
+    private void setBackground(String backgroundName) {
+        rootLayout.setBackgroundResource(getResources().getIdentifier(backgroundName, "drawable", getPackageName()));
     }
 
 }
