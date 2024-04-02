@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RadioGroup;
 import android.widget.Switch;
 import androidx.appcompat.app.AppCompatActivity;
@@ -52,7 +53,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
-        Button btnCloseSettings = findViewById(R.id.btnCloseSettings);
+        ImageButton btnCloseSettings = findViewById(R.id.btnCloseSettings);
         btnCloseSettings.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

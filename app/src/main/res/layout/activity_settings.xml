@@ -1,28 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Paramètres"
-        android:textSize="24sp"
-        android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/btnCloseSettings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Fermer" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
+        <ImageButton
+            android:id="@+id/btnCloseSettings"
+            android:layout_width="62dp"
+            android:layout_height="55dp"
+            android:background="#00FFFFFF"
+            android:scaleType="fitCenter"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/close_petit" />
 
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="379dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/tilte_setting" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <include layout="@layout/fond_selector"/>
 
-
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"></LinearLayout>
 
 
 </LinearLayout>
