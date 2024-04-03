@@ -103,9 +103,11 @@ public class GameActivity extends AppCompatActivity {
         // check save store for interrupted game and restore it if present
         SharedPreferences save = getSharedPreferences("save", 0);
         String gameStates = save.getString("gameStates", "");
-        if (!gameStates.isEmpty()) {
-            this.game = Game.deserialize(gameStates);
-        } else { // no game saved
+        Game savedGame = Game.deserialize(gameStates);
+        if (savedGame != null) {
+            this.game = savedGame;
+        }
+        else { // no game saved
             createGrid(getScreenSize()[0] - 150);
             startNewGame(this.difficulty);
         }
