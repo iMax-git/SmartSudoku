@@ -12,6 +12,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +29,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -56,9 +58,10 @@ public class GameActivity extends AppCompatActivity {
 
     Integer[] selectedCell = new Integer[2];
 
-    Game game = new Game();
+    Game game;
     Difficulty difficulty = Difficulty.MEDIUM;
-    LocalDateTime gameStartTime;
+    LocalDateTime startTime;
+    Handler timerUpdateHandler = new Handler();
 
     /**
      * Forme pour les rectangles des cellules par défaut(initialement défini, sélectionnées et de base
@@ -122,12 +125,13 @@ public class GameActivity extends AppCompatActivity {
         SharedPreferences saveStore = getSharedPreferences("save", 0);
         SharedPreferences.Editor saveEditor = saveStore.edit();
         if (!game.isWon()) {
-            game.addToTime(Duration.between(this.gameStartTime, LocalDateTime.now()).getSeconds());
+            game.setTimer(getTimerAsSeconds());
             saveEditor.putString("gameStates", game.serialize());
         } else {
             saveEditor.remove("gameStates");
         }
         saveEditor.apply();
+        timerUpdateHandler.removeCallbacksAndMessages(null);
     }
 
 
@@ -138,7 +142,7 @@ public class GameActivity extends AppCompatActivity {
         drawGrid();
         refreshStateButtons();
         setupInteractiveCells();
-        this.gameStartTime = LocalDateTime.now();
+        setupTimerUpdater();
     }
 
 
@@ -367,7 +371,7 @@ public class GameActivity extends AppCompatActivity {
         refreshStateButtons();
         setupInteractiveCells(); // Réactivation des cellules interactives
         setValuesToDefault();
-        gameStartTime = LocalDateTime.now();
+        startTime = LocalDateTime.now();
     }
 
 
@@ -478,4 +482,32 @@ public class GameActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+
+    /*
+        handle timer
+     */
+
+    protected long getTimerAsSeconds() {
+        return game.getTimer() + Duration.between(this.startTime, LocalDateTime.now()).getSeconds();
+    }
+
+    protected String getTimerAsString() {
+        final long value = getTimerAsSeconds();
+        final int seconds = (int) (value % 60L);
+        final int minutes = (int) (value / 60L) % 60;
+        final int hours = (int) (value / 60L / 60L);
+        return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
+    protected void setupTimerUpdater() {
+        this.startTime = LocalDateTime.now();
+        Runnable updateTimer = new Runnable() {
+            @Override
+            public void run() {
+                System.out.printf("=== timer: %s\n", getTimerAsString());
+                timerUpdateHandler.postDelayed(this, 1000);
+            }
+        };
+        timerUpdateHandler.postDelayed(updateTimer, 1000);
+    }
 }
