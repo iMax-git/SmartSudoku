@@ -34,14 +34,17 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
+        <!-- Timer -->
+        <!-- width must be enough for the text to grow 3 chars  -->
         <TextView
             android:id="@+id/timerView"
-            android:layout_width="wrap_content"
+            android:layout_width="80dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:textIsSelectable="false"
             android:gravity="end|bottom"
             android:paddingHorizontal="10dp"
+            android:textSize="8pt"
             />
 
     </LinearLayout>

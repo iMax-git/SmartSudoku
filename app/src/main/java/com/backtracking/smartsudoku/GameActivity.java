@@ -500,7 +500,11 @@ public class GameActivity extends AppCompatActivity {
         final int seconds = (int) (value % 60L);
         final int minutes = (int) (value / 60L) % 60;
         final int hours = (int) (value / 60L / 60L);
-        return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds);
+        if (hours == 0) {
+            return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
+        } else {
+            return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds);
+        }
     }
 
     protected void updateGameTime() {
