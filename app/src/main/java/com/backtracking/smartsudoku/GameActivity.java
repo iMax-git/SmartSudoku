@@ -62,6 +62,7 @@ public class GameActivity extends AppCompatActivity {
     Difficulty difficulty = Difficulty.MEDIUM;
     LocalDateTime startTime;
     Handler timerUpdateHandler = new Handler();
+    TextView timerView;
 
     /**
      * Forme pour les rectangles des cellules par défaut(initialement défini, sélectionnées et de base
@@ -84,6 +85,7 @@ public class GameActivity extends AppCompatActivity {
         this.end_menu = findViewById(R.id.endGameMenu);
         this.btnRedo = findViewById(R.id.btnRedo);
         this.btnUndo = findViewById(R.id.btnUndo);
+        this.timerView = findViewById(R.id.timerView);
         this.setupKeyboard();
 
         this.btnSettings.setOnClickListener(v -> buttonSwitchActivity(v, SettingsActivity.class));
@@ -510,7 +512,7 @@ public class GameActivity extends AppCompatActivity {
         Runnable updateTimer = new Runnable() {
             @Override
             public void run() {
-                System.out.printf("=== timer: %s\n", getTimerAsString());
+                timerView.setText(getTimerAsString());
                 timerUpdateHandler.postDelayed(this, 1000);
             }
         };
