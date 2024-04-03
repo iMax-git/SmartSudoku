@@ -127,13 +127,13 @@ public class GameActivity extends AppCompatActivity {
         SharedPreferences saveStore = getSharedPreferences("save", 0);
         SharedPreferences.Editor saveEditor = saveStore.edit();
         if (!game.isWon()) {
-            game.setTimer(getTimerAsSeconds());
+            updateGameTime();
             saveEditor.putString("gameStates", game.serialize());
         } else {
             saveEditor.remove("gameStates");
         }
         saveEditor.apply();
-        timerUpdateHandler.removeCallbacksAndMessages(null);
+        stopTimerUpdater();
     }
 
 
@@ -144,7 +144,7 @@ public class GameActivity extends AppCompatActivity {
         drawGrid();
         refreshStateButtons();
         setupInteractiveCells();
-        setupTimerUpdater();
+        startTimerUpdater();
     }
 
 
@@ -501,7 +501,11 @@ public class GameActivity extends AppCompatActivity {
         return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds);
     }
 
-    protected void setupTimerUpdater() {
+    protected void updateGameTime() {
+        game.setTimer(getTimerAsSeconds());
+    }
+
+    protected void startTimerUpdater() {
         this.startTime = LocalDateTime.now();
         Runnable updateTimer = new Runnable() {
             @Override
@@ -511,5 +515,9 @@ public class GameActivity extends AppCompatActivity {
             }
         };
         timerUpdateHandler.postDelayed(updateTimer, 1000);
+    }
+
+    protected void stopTimerUpdater() {
+        timerUpdateHandler.removeCallbacksAndMessages(null);
     }
 }
