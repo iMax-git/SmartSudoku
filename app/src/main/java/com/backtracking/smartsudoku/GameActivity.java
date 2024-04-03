@@ -82,6 +82,7 @@ public class GameActivity extends AppCompatActivity {
         this.btnRedo = findViewById(R.id.btnRedo);
         this.btnUndo = findViewById(R.id.btnUndo);
         this.setupKeyboard();
+        this.updateBackground();
 
         this.btnSettings.setOnClickListener(v -> buttonSwitchActivity(v, SettingsActivity.class));
 
@@ -154,6 +155,7 @@ public class GameActivity extends AppCompatActivity {
 //        rootLayout.requestLayout();
         refreshStateButtons();
         setupInteractiveCells();
+        this.updateBackground();
     }
 
 

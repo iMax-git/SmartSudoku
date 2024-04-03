@@ -63,13 +63,17 @@ public class SettingsActivity extends AppCompatActivity {
 
         this.spinnerWallpaper.setAdapter(adapter);
 
-        this.spinnerWallpaper.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        this.spinnerWallpaper.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String backgroundName = wallpaperList.get(position);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.putString("background", backgroundName);
-                editor.apply();
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (wallpaperList.get(position) != null) {
+                    //changeBackground(wallpaperList.get(position));
+                    prefs.edit().putString("wallpaper", wallpaperList.get(position)).apply();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
 
