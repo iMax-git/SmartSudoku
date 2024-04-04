@@ -116,13 +116,6 @@ public class GameActivity extends AppCompatActivity {
             this.difficulty = Difficulty.MEDIUM;
         }
 
-        try {
-            SharedPreferences background = getSharedPreferences("background", 0);
-            String backgroundName = background.getString("background", "@drawable/fond1");
-            setBackground(backgroundName);
-        } catch (Exception ex) {
-            setBackground("@drawable/fond1");
-        }
 
 
         // check save store for interrupted game and restore it if present
@@ -497,13 +490,25 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void updateBackground() {
+        System.out.println("Updating background");
+        // Get background from shared preferences
         SharedPreferences background = getSharedPreferences("background", 0);
-        String backgroundName = background.getString("background", "@drawable/fond1");
-        setBackground(backgroundName);
+        String backgroundName = background.getString("background", "");
+        rootLayout.setBackgroundResource(getResources().getIdentifier(backgroundName, "drawable", getPackageName()));
+
     }
 
     private void setBackground(String backgroundName) {
-        rootLayout.setBackgroundResource(getResources().getIdentifier(backgroundName, "drawable", getPackageName()));
+        System.out.println("Setting background to " + backgroundName);
+        // Change in shared preferences
+        SharedPreferences.Editor editor = getSharedPreferences("background", 0).edit();
+        editor.putString("background", backgroundName);
+        editor.apply();
+        updateBackground();
+    }
+
+    private void TriggerNotification() {
+        
     }
 
 }
