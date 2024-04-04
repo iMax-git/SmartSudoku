@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -13,6 +12,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.widget.Button;
@@ -25,9 +25,11 @@ import com.backtracking.smartsudoku.models.Game;
 import com.backtracking.smartsudoku.models.ImmutableGrid;
 import com.backtracking.smartsudoku.models.SudokuGenerator;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -56,9 +58,11 @@ public class GameActivity extends AppCompatActivity {
 
     Integer[] selectedCell = new Integer[2];
 
-    Game game = new Game();
+    Game game;
     Difficulty difficulty = Difficulty.MEDIUM;
-    LocalDateTime timer = LocalDateTime.now();
+    LocalDateTime startTime;
+    Handler timerUpdateHandler = new Handler();
+    TextView timerView;
 
     /**
      * Forme pour les rectangles des cellules par défaut(initialement défini, sélectionnées et de base
@@ -81,27 +85,12 @@ public class GameActivity extends AppCompatActivity {
         this.end_menu = findViewById(R.id.endGameMenu);
         this.btnRedo = findViewById(R.id.btnRedo);
         this.btnUndo = findViewById(R.id.btnUndo);
+        this.timerView = findViewById(R.id.timerView);
         this.setupKeyboard();
         this.updateBackground();
 
         this.btnSettings.setOnClickListener(v -> buttonSwitchActivity(v, SettingsActivity.class));
 
-    }
-
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        // when app closes (either via back button or by the system),
-        // save the current game if it is not finished.
-        SharedPreferences saveStore = getSharedPreferences("save", 0);
-        SharedPreferences.Editor storeEditor = saveStore.edit();
-        if (!game.isWon()) {
-            storeEditor.putString("gameStates", game.serialize());
-        } else {
-            storeEditor.remove("gameStates");
-        }
-        storeEditor.apply();
     }
 
 
@@ -121,10 +110,12 @@ public class GameActivity extends AppCompatActivity {
         // check save store for interrupted game and restore it if present
         SharedPreferences save = getSharedPreferences("save", 0);
         String gameStates = save.getString("gameStates", "");
-        if (!gameStates.isEmpty()) {
-            this.game = Game.deserialize(gameStates);
-        } else { // no game saved
-            createGrid(getScreenSize()[0]-150);
+        Game savedGame = Game.deserialize(gameStates);
+        if (savedGame != null) {
+            this.game = savedGame;
+        }
+        else { // no game saved
+            createGrid(getScreenSize()[0] - 150);
             startNewGame(this.difficulty);
         }
     }
@@ -133,9 +124,23 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
+
+        // save settings
         SharedPreferences.Editor settingsEditor = getSharedPreferences("settings",0).edit();
         settingsEditor.putInt("difficulty", difficulty.ordinal());
         settingsEditor.apply();
+
+        // save game
+        SharedPreferences saveStore = getSharedPreferences("save", 0);
+        SharedPreferences.Editor saveEditor = saveStore.edit();
+        if (!game.isWon()) {
+            updateGameTime();
+            saveEditor.putString("gameStates", game.serialize());
+        } else {
+            saveEditor.remove("gameStates");
+        }
+        saveEditor.apply();
+        stopTimerUpdater();
     }
 
 
@@ -144,11 +149,10 @@ public class GameActivity extends AppCompatActivity {
         super.onResume();
         createGrid(getScreenSize()[0]-150);
         drawGrid();
-//        rootLayout.addOnLayoutChangeListener(new RootLayoutChangeListener());
-//        rootLayout.requestLayout();
         refreshStateButtons();
         setupInteractiveCells();
         this.updateBackground();
+        startTimerUpdater();
     }
 
 
@@ -340,7 +344,6 @@ public class GameActivity extends AppCompatActivity {
      * Handle the UI event to start a new game
      */
     public void startNewGame(View v) {
-
         // Création d'une boîte de dialogue pour choisir la difficulté
         final String[] difficulties = {"EASY", "MEDIUM", "HARD"};
 
@@ -352,7 +355,6 @@ public class GameActivity extends AppCompatActivity {
                     startNewGame(Difficulty.fromInt(which));
                 });
         builder.create().show();
-
     }
 
 
@@ -378,7 +380,7 @@ public class GameActivity extends AppCompatActivity {
         refreshStateButtons();
         setupInteractiveCells(); // Réactivation des cellules interactives
         setValuesToDefault();
-
+        startTime = LocalDateTime.now();
     }
 
 
@@ -507,8 +509,44 @@ public class GameActivity extends AppCompatActivity {
         updateBackground();
     }
 
-    private void TriggerNotification() {
-        
+
+    /*
+        handle timer
+     */
+
+    protected long getTimerAsSeconds() {
+        return game.getTimer() + Duration.between(this.startTime, LocalDateTime.now()).getSeconds();
     }
 
+    protected String getTimerAsString() {
+        final long value = getTimerAsSeconds();
+        final int seconds = (int) (value % 60L);
+        final int minutes = (int) (value / 60L) % 60;
+        final int hours = (int) (value / 60L / 60L);
+        if (hours == 0) {
+            return String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
+        } else {
+            return String.format(Locale.getDefault(), "%02d:%02d:%02d", hours, minutes, seconds);
+        }
+    }
+
+    protected void updateGameTime() {
+        game.setTimer(getTimerAsSeconds());
+    }
+
+    protected void startTimerUpdater() {
+        this.startTime = LocalDateTime.now();
+        Runnable updateTimer = new Runnable() {
+            @Override
+            public void run() {
+                timerView.setText(getTimerAsString());
+                timerUpdateHandler.postDelayed(this, 1000);
+            }
+        };
+        timerUpdateHandler.postDelayed(updateTimer, 1000);
+    }
+
+    protected void stopTimerUpdater() {
+        timerUpdateHandler.removeCallbacksAndMessages(null);
+    }
 }

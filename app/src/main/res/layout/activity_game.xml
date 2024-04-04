@@ -12,9 +12,11 @@
 
     <!-- Header -->
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="16dp"
         >
 
         <!-- Settings icon -->
@@ -28,7 +30,26 @@
             android:scaleType="fitCenter"
             app:srcCompat="@drawable/settings" />
 
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <!-- Timer -->
+        <!-- width must be enough for the text to grow 3 chars  -->
+        <TextView
+            android:id="@+id/timerView"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textIsSelectable="false"
+            android:gravity="end|bottom"
+            android:paddingHorizontal="10dp"
+            android:textSize="8pt"
+            />
+
     </LinearLayout>
+
     <!-- Grid -->
     <LinearLayout
         android:id="@+id/gridContainer"
@@ -54,6 +75,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginTop="10dp"
         >
 
         <ImageButton
