@@ -1,0 +1,22 @@
+<RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/radioGroupFond"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <RadioButton
+        android:id="@+id/radioFond1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fond 1"
+        android:drawableRight="@drawable/fond1" />
+
+    <RadioButton
+        android:id="@+id/radioFond2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Fond 2"
+        android:drawableRight="@drawable/fond2" />
+
+    <!-- Ajoutez des RadioButton supplémentaires pour chaque fond d'écran disponible -->
+</RadioGroup>

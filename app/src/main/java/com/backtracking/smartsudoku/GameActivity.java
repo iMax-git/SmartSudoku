@@ -87,8 +87,10 @@ public class GameActivity extends AppCompatActivity {
         this.btnUndo = findViewById(R.id.btnUndo);
         this.timerView = findViewById(R.id.timerView);
         this.setupKeyboard();
+        this.updateBackground();
 
         this.btnSettings.setOnClickListener(v -> buttonSwitchActivity(v, SettingsActivity.class));
+
     }
 
 
@@ -102,6 +104,9 @@ public class GameActivity extends AppCompatActivity {
         } catch (Exception ex) {
             this.difficulty = Difficulty.MEDIUM;
         }
+
+
+
         // check save store for interrupted game and restore it if present
         SharedPreferences save = getSharedPreferences("save", 0);
         String gameStates = save.getString("gameStates", "");
@@ -146,6 +151,7 @@ public class GameActivity extends AppCompatActivity {
         drawGrid();
         refreshStateButtons();
         setupInteractiveCells();
+        this.updateBackground();
         startTimerUpdater();
     }
 
@@ -272,7 +278,6 @@ public class GameActivity extends AppCompatActivity {
             }
         }
     }
-
 
 
 
@@ -484,6 +489,24 @@ public class GameActivity extends AppCompatActivity {
     private void buttonSwitchActivity(View v, Class<?> activity) {
         Intent intent = new Intent(this, activity);
         startActivity(intent);
+    }
+
+    private void updateBackground() {
+        System.out.println("Updating background");
+        // Get background from shared preferences
+        SharedPreferences background = getSharedPreferences("background", 0);
+        String backgroundName = background.getString("background", "");
+        rootLayout.setBackgroundResource(getResources().getIdentifier(backgroundName, "drawable", getPackageName()));
+
+    }
+
+    private void setBackground(String backgroundName) {
+        System.out.println("Setting background to " + backgroundName);
+        // Change in shared preferences
+        SharedPreferences.Editor editor = getSharedPreferences("background", 0).edit();
+        editor.putString("background", backgroundName);
+        editor.apply();
+        updateBackground();
     }
 
 

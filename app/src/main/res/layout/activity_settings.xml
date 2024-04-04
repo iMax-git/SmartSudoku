@@ -1,53 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=" @string/settings_title"
-        android:textSize="24sp"
-        android:textStyle="bold" />
 
-    <View
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="?android:attr/listDivider"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp" />
+        android:layout_height="wrap_content">
 
-    <androidx.preference.PreferenceCategory
-        app:title="@string/general_settings_title">
+        <ImageButton
+            android:id="@+id/btnCloseSettings"
+            android:layout_width="62dp"
+            android:layout_height="55dp"
+            android:background="#00FFFFFF"
+            android:scaleType="fitCenter"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/close_petit"
+            android:contentDescription="@string/closebutton" />
 
-        <SwitchPreferenceCompat
-            app:key="notifications_enabled"
-            app:title="@string/notifications_enabled_title"
-            app:summary="@string/notifications_enabled_summary"
-            app:defaultValue="true" />
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="379dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/tilte_setting"
+            android:contentDescription="@string/settings" />
 
-        <ListPreference
-            app:key="theme"
-            app:title="@string/theme_title"
-            app:summary="@string/theme_summary"
-            app:entries="@array/theme_entries"
-            app:entryValues="@array/theme_values"
-            app:defaultValue="@string/theme_default_value" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!--
+    <include layout="@layout/fond_selector"/>
+    -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
 
-    </androidx.preference.PreferenceCategory>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/spinnerFond"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintBaseline_toBaselineOf="@id/spinnerFond"
 
-    <androidx.preference.PreferenceCategory
-        app:title="@string/advanced_settings_title">
+            android:text="@string/theme_title" />
+        />
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/spinnerFond"
+        />
+    </LinearLayout>
 
-        <SwitchPreferenceCompat
-            app:key="debug_mode"
-            app:title="@string/debug_mode_title"
-            app:summary="@string/debug_mode_summary"
-            app:defaultValue="false" />
 
-    </androidx.preference.PreferenceCategory>
+
+
 
 </LinearLayout>

@@ -19,4 +19,7 @@
     <string name="debug_mode_title">Mode debug</string>
     <string name="debug_mode_summary">Voir des choses étranges ?</string>
     <string name="settingsbutton">SettingsButton</string>
+    <string name="settings">Settings</string>
+    <string name="closebutton">Close Button</string>
+    <string name="active_notification" >Activer les notifications</string>
 </resources>
