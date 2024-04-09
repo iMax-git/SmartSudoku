@@ -1,24 +1,15 @@
 package com.backtracking.smartsudoku;
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
 
 import com.backtracking.smartsudoku.adapter.WallpaperAdapter;
-import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,23 +17,9 @@ import java.util.List;
 public class SettingsActivity extends AppCompatActivity {
 
 
-    private Spinner spinnerWallpaper;
-    private SwitchMaterial switchNotifications;
 
-    private List<String> wallpaperList = new ArrayList<>();
-    private List<String> wallpaperLabels = new ArrayList<>();
-    private NotificationChannel channel;
-    private NotificationManager notificationManager;
-
-    private void changeBackground(String backgroundName) {
-        int resId = getResources().getIdentifier(backgroundName, "drawable", getPackageName());
-        if (resId != 0) {
-            findViewById(R.id.rootLayout).setBackgroundResource(resId);
-        } else {
-            // Gestion de l'erreur si la ressource n'est pas trouvée
-            Log.e("SettingsActivity", "La ressource de fond n'a pas été trouvée: " + backgroundName);
-        }
-    }
+    private final List<String> wallpaperList = new ArrayList<>();
+    private final List<String> wallpaperLabels = new ArrayList<>();
 
 
     @Override
@@ -63,7 +40,7 @@ public class SettingsActivity extends AppCompatActivity {
         wallpaperList.add("@drawable/fond6");
         wallpaperLabels.add("Fond 6");
 
-        this.spinnerWallpaper = findViewById(R.id.spinnerFond);
+        Spinner spinnerWallpaper = findViewById(R.id.spinnerFond);
 
         WallpaperAdapter<String> adapter = new WallpaperAdapter<>(
                 this,
@@ -71,16 +48,16 @@ public class SettingsActivity extends AppCompatActivity {
                 wallpaperLabels.toArray(new String[0])
         );
 
-        this.spinnerWallpaper.setAdapter(adapter);
+        spinnerWallpaper.setAdapter(adapter);
 
         // Récupérer le fond d'écran actuel
         String currentBackground = getSharedPreferences("background", MODE_PRIVATE).getString("background", "");
         int index = wallpaperList.indexOf(currentBackground);
         if (index != -1) {
-            this.spinnerWallpaper.setSelection(index);
+            spinnerWallpaper.setSelection(index);
         }
 
-        this.spinnerWallpaper.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        spinnerWallpaper.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (wallpaperList.get(position) != null) {
@@ -108,12 +85,9 @@ public class SettingsActivity extends AppCompatActivity {
 
 
         ImageButton btnCloseSettings = findViewById(R.id.btnCloseSettings);
-        btnCloseSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Fermer l'activité
-                finish();
-            }
+        btnCloseSettings.setOnClickListener(v -> {
+            // Fermer l'activité
+            finish();
         });
         }
 

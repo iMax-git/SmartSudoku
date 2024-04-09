@@ -20,8 +20,8 @@ public class SudokuGenerator {
         return this.cells[y*9+x];
     }
 
-    private boolean fillGrid() {
-        return fillCell(0);
+    private void fillGrid() {
+        fillCell(0);
     }
 
     private boolean fillCell(int index) {

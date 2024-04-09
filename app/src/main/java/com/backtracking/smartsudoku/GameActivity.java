@@ -40,36 +40,34 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-    LinearLayout rootLayout;
-    LinearLayout gridContainer;
-    GridLayout gridView;
-    ImageButton btnSettings;
+    private LinearLayout rootLayout;
+    private LinearLayout gridContainer;
+    private  GridLayout gridView;
+    private ImageButton btnSettings;
 
-    LinearLayout view_keyboard;
-    LinearLayout end_menu;
+    private LinearLayout view_keyboard;
+    private LinearLayout end_menu;
 
-    ImageButton btnUndo, btnRedo;
+    private ImageButton btnUndo, btnRedo;
 
-    boolean DEBUG_CELL = false;
+    private final boolean DEBUG_CELL = false;
 
-    List<TextView> cells = new ArrayList<>();
+    private final List<TextView> cells = new ArrayList<>();
 
-    Integer SIZE;
+    private final Integer[] selectedCell = new Integer[2];
 
-    Integer[] selectedCell = new Integer[2];
-
-    Game game;
-    Difficulty difficulty = Difficulty.MEDIUM;
-    LocalDateTime startTime;
-    Handler timerUpdateHandler = new Handler();
-    TextView timerView;
+    private Game game;
+    private Difficulty difficulty = Difficulty.MEDIUM;
+    private LocalDateTime startTime;
+    private final Handler timerUpdateHandler = new Handler();
+    private TextView timerView;
 
     /**
      * Forme pour les rectangles des cellules par défaut(initialement défini, sélectionnées et de base
      */
-    ShapeDrawable shapeDefaultDrawable;
-    ShapeDrawable shapeSelectedDrawable;
-    ShapeDrawable shapeBaseDrawable;
+    private ShapeDrawable shapeDefaultDrawable;
+    private ShapeDrawable shapeSelectedDrawable;
+    private ShapeDrawable shapeBaseDrawable;
 
 
     @Override
@@ -89,7 +87,7 @@ public class GameActivity extends AppCompatActivity {
         this.setupKeyboard();
         this.updateBackground();
 
-        this.btnSettings.setOnClickListener(v -> buttonSwitchActivity(v, SettingsActivity.class));
+        this.btnSettings.setOnClickListener(v -> buttonSwitchActivity(SettingsActivity.class));
 
     }
 
@@ -486,7 +484,7 @@ public class GameActivity extends AppCompatActivity {
 
 
 
-    private void buttonSwitchActivity(View v, Class<?> activity) {
+    private void buttonSwitchActivity(Class<?> activity) {
         Intent intent = new Intent(this, activity);
         startActivity(intent);
     }
@@ -500,14 +498,6 @@ public class GameActivity extends AppCompatActivity {
 
     }
 
-    private void setBackground(String backgroundName) {
-        System.out.println("Setting background to " + backgroundName);
-        // Change in shared preferences
-        SharedPreferences.Editor editor = getSharedPreferences("background", 0).edit();
-        editor.putString("background", backgroundName);
-        editor.apply();
-        updateBackground();
-    }
 
 
     /*
