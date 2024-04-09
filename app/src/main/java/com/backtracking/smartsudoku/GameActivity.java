@@ -50,7 +50,7 @@ public class GameActivity extends AppCompatActivity {
 
     private ImageButton btnUndo, btnRedo;
 
-    private final boolean DEBUG_CELL = false;
+    private final boolean DEBUG = false;
 
     private final List<TextView> cells = new ArrayList<>();
 
@@ -191,7 +191,7 @@ public class GameActivity extends AppCompatActivity {
             tv.setTextSize(20);
             tv.setGravity(1);
 
-            if (DEBUG_CELL) {
+            if (DEBUG) {
                 tv.setTextColor(Color.WHITE);
                 tv.setBackgroundColor(Color.BLACK);
             } else {
@@ -361,8 +361,8 @@ public class GameActivity extends AppCompatActivity {
         ImmutableGrid solution = generator.getGrid();
         switch (difficulty) {
             case EASY:
-//                generator.removeNumbers(25);
-                generator.removeNumbers(1); // to DEBUG win condition
+                generator.removeNumbers(DEBUG ? 1 : 25); // Si DEBUG est vrai, on ne retire qu'une seule cellule
+
                 break;
             case MEDIUM:
                 generator.removeNumbers(37);
