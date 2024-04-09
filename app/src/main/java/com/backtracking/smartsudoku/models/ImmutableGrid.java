@@ -115,7 +115,7 @@ public class ImmutableGrid {
 
 
     // untested methods
-    // TODO: test conversion methods
+
     public static int coordToIndex(int x, int y) {
         return y*9+x;
     }
