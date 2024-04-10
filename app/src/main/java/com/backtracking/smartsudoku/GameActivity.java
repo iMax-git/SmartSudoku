@@ -102,8 +102,6 @@ public class GameActivity extends AppCompatActivity {
             this.difficulty = Difficulty.MEDIUM;
         }
 
-
-
         // check save store for interrupted game and restore it if present
         SharedPreferences save = getSharedPreferences("save", 0);
         String gameStates = save.getString("gameStates", "");
@@ -153,18 +151,6 @@ public class GameActivity extends AppCompatActivity {
     }
 
 
-    class RootLayoutChangeListener implements View.OnLayoutChangeListener {
-        @Override
-        public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-            rootLayout.removeOnLayoutChangeListener(this);
-            final int gridWidth = right-left;
-            createGrid(gridWidth);
-            gridContainer.setMinimumHeight(gridWidth);
-            drawGrid();
-        }
-    }
-
-    
     protected void createGrid(int gridSize)
     {
         this.gridView.removeAllViewsInLayout();
