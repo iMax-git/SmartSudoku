@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -88,7 +89,8 @@ public class SettingsActivity extends AppCompatActivity {
                     editor.putString("background", wallpaperList.get(position));
                     editor.apply();
 
-
+                    // Update background
+                    updateBackground();
                     System.out.println("Fond d'écran sélectionné: " + settings.getString("background", ""));
 
                 } else {
@@ -100,6 +102,8 @@ public class SettingsActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+        this.updateBackground();
 
         ImageButton btnCloseSettings = findViewById(R.id.btnCloseSettings);
         btnCloseSettings.setOnClickListener(v -> {
@@ -127,6 +131,10 @@ public class SettingsActivity extends AppCompatActivity {
         };
     }
 
+    protected void onResume() {
+        super.onResume();
+        this.updateBackground();
+    }
 
     @Override
     protected void onStart() {
@@ -219,6 +227,15 @@ public class SettingsActivity extends AppCompatActivity {
             String loggedInStatus = getString(R.string.loggedInStatusMessage, user.getDisplayName());
             loggedInMessage.setText(loggedInStatus);
         }
+    }
+
+    private void updateBackground() {
+        System.out.println("Updating background");
+        // Get background from shared preferences
+        SharedPreferences settings = getSharedPreferences("settings", 0);
+        String backgroundName = settings.getString("background", "");
+        LinearLayout rootLayout = findViewById(R.id.rootLayout);
+        rootLayout.setBackgroundResource(getResources().getIdentifier(backgroundName, "drawable", getPackageName()));
     }
 
 
