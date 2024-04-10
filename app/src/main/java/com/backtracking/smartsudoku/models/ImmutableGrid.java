@@ -47,7 +47,10 @@ public class ImmutableGrid {
     public List<Integer> getRow(int rowIndex) {
         List<Integer> row = new ArrayList<>();
         for (int i=0; i<9; ++i) {
-            row.add((int)this.cells[rowIndex*9 + i]);
+            int number = this.get(i, rowIndex);
+            if (number != 0) {
+                row.add(number);
+            }
         }
         return row;
     }
@@ -56,7 +59,10 @@ public class ImmutableGrid {
     public List<Integer> getColumn(int colIndex) {
         List<Integer> column = new ArrayList<>();
         for (int i=0; i<9; ++i) {
-            column.add((int)this.cells[i*9 + colIndex]);
+            int number = this.get(colIndex, i);
+            if (number != 0) {
+                column.add(number);
+            }
         }
         return column;
     }
@@ -68,7 +74,10 @@ public class ImmutableGrid {
         final int ry = regionIndex/3*3;
         for (int i=0; i<3; ++i) {
             for (int j=0; j<3; ++j) {
-                region.add(this.get(rx+i, ry+j));
+                int number = this.get(rx+i, ry+j);
+                if (number != 0) {
+                    region.add(number);
+                }
             }
         }
         return region;
@@ -127,7 +136,8 @@ public class ImmutableGrid {
 
 
     public static int indexToRegion(int index) {
-        return index%3;
+//        return index%3;
+        return (index / 9 / 3) * 3 + (index % 9 / 3);
     }
     // /untested methods
 

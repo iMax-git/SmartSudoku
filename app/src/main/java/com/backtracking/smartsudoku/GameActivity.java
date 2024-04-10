@@ -202,6 +202,37 @@ public class GameActivity extends AppCompatActivity {
                 selectedCell[1] = y;
                 cells.get(id).setBackground(shapeSelectedDrawable);
 
+                // setup keyboard numbers
+                ImmutableGrid grid = game.getGrid();
+                List<Integer> row = grid.getRow(y);
+                List<Integer> column = grid.getColumn(x);
+                List<Integer> region = grid.getRegion(ImmutableGrid.indexToRegion(id));
+
+                // debug code
+                 System.out.printf("row: %s\n", row);
+                 System.out.printf("col: %s\n", column);
+                 System.out.printf("region: %s\n", region);
+                 System.out.flush();
+
+                GridLayout keyboard = findViewById(R.id.keyboard);
+
+                // enable all keyboard buttons
+                for (int btnIndex=0; btnIndex<keyboard.getChildCount(); ++btnIndex) {
+                    Button button = (Button) keyboard.getChildAt(btnIndex);
+                    button.setEnabled(true);
+                }
+
+                // disable relevant keyboard buttons
+                for (Integer number : row) {
+                    keyboard.findViewById(number).setEnabled(false);
+                }
+                for (Integer number : column) {
+                    keyboard.findViewById(number).setEnabled(false);
+                }
+                for (Integer number : region) {
+                    keyboard.findViewById(number).setEnabled(false);
+                }
+
                 this.view_keyboard.setVisibility(View.VISIBLE);
             });
 
