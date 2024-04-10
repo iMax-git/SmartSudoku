@@ -88,7 +88,6 @@ public class GameActivity extends AppCompatActivity {
         this.updateBackground();
 
         this.btnSettings.setOnClickListener(v -> buttonSwitchActivity(SettingsActivity.class));
-
     }
 
 
@@ -492,10 +491,9 @@ public class GameActivity extends AppCompatActivity {
     private void updateBackground() {
         System.out.println("Updating background");
         // Get background from shared preferences
-        SharedPreferences background = getSharedPreferences("background", 0);
-        String backgroundName = background.getString("background", "");
+        SharedPreferences settings = getSharedPreferences("settings", 0);
+        String backgroundName = settings.getString("background", "");
         rootLayout.setBackgroundResource(getResources().getIdentifier(backgroundName, "drawable", getPackageName()));
-
     }
 
 

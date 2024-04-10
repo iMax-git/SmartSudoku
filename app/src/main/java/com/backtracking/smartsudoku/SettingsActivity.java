@@ -51,7 +51,7 @@ public class SettingsActivity extends AppCompatActivity {
         spinnerWallpaper.setAdapter(adapter);
 
         // Récupérer le fond d'écran actuel
-        String currentBackground = getSharedPreferences("background", MODE_PRIVATE).getString("background", "");
+        String currentBackground = getSharedPreferences("settings", MODE_PRIVATE).getString("background", "");
         int index = wallpaperList.indexOf(currentBackground);
         if (index != -1) {
             spinnerWallpaper.setSelection(index);
@@ -62,12 +62,13 @@ public class SettingsActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (wallpaperList.get(position) != null) {
                     // Change id in shared preferences
-                    SharedPreferences.Editor editor = getSharedPreferences("background", MODE_PRIVATE).edit();
+                    SharedPreferences settings = getSharedPreferences("settings", 0);
+                    SharedPreferences.Editor editor = settings.edit();
                     editor.putString("background", wallpaperList.get(position));
                     editor.apply();
 
 
-                    System.out.println("Fond d'écran sélectionné: " + getSharedPreferences("background", MODE_PRIVATE).getString("background", ""));
+                    System.out.println("Fond d'écran sélectionné: " + settings.getString("background", ""));
 
                 } else {
                     System.out.println("Erreur lors de la sélection du fond d'écran");
