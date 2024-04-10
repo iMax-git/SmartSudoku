@@ -1,5 +1,7 @@
 package com.backtracking.smartsudoku;
 
+import static android.opengl.ETC1.getWidth;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,8 +9,12 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Bundle;
@@ -257,6 +263,28 @@ public class GameActivity extends AppCompatActivity {
             this.cells.add(tv);
             this.gridView.addView(tv);
         }
+
+        // region borders
+        Paint gridPaint = new Paint();
+        gridPaint.setColor(Color.BLACK);
+        gridPaint.setStrokeWidth(6);
+
+        final int regionSize = gridSize/3;
+        System.out.printf("regionSize: %d\n", regionSize);
+
+        Bitmap bmp = Bitmap.createBitmap(gridSize, gridSize, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bmp);
+
+        for (int i = 0; i <= regionSize; i++) {
+            canvas.drawLine(0, i * regionSize, gridSize, i * regionSize, gridPaint);
+        }
+        for (int i = 0; i <= regionSize; i++) {
+            canvas.drawLine(i * regionSize, 0, i * regionSize, gridSize, gridPaint);
+        }
+
+        canvas.save();
+        Drawable bmpDrawable = new BitmapDrawable(getResources(), bmp);
+        gridView.setForeground(bmpDrawable);
     }
 
 
