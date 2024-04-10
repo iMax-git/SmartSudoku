@@ -282,7 +282,6 @@ public class GameActivity extends AppCompatActivity {
             canvas.drawLine(i * regionSize, 0, i * regionSize, gridSize, gridPaint);
         }
 
-        canvas.save();
         Drawable bmpDrawable = new BitmapDrawable(getResources(), bmp);
         gridView.setForeground(bmpDrawable);
     }
