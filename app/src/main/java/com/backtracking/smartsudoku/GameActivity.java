@@ -205,6 +205,7 @@ public class GameActivity extends AppCompatActivity {
                 }
                 selectedCell[0] = x;
                 selectedCell[1] = y;
+
                 cells.get(id).setBackground(shapeSelectedDrawable);
 
                 // setup keyboard numbers
@@ -416,6 +417,7 @@ public class GameActivity extends AppCompatActivity {
             if (game.isWon()) {
                 System.out.println("Game won!");
                 setGridViewEnabled(false);
+
                 endGame();
             }
             refreshStateButtons();
@@ -503,7 +505,7 @@ public class GameActivity extends AppCompatActivity {
 
         Button btnNewGame = findViewById(R.id.btnNewGameEnd);
         btnNewGame.setOnClickListener(v -> startNewGame(this.gridView));
-
+        stopTimerUpdater();
 
         this.end_menu.setVisibility(View.VISIBLE);
 
