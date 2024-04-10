@@ -164,20 +164,7 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration config) {
-        super.onConfigurationChanged(config);
-
-        this.rootLayout.setOrientation(config.orientation==Configuration.ORIENTATION_LANDSCAPE ?
-                LinearLayout.HORIZONTAL : LinearLayout.VERTICAL);
-
-        rootLayout.addOnLayoutChangeListener(new RootLayoutChangeListener());
-        rootLayout.requestLayout();
-    }
-
-
-
+    
     protected void createGrid(int gridSize)
     {
         this.gridView.removeAllViewsInLayout();
