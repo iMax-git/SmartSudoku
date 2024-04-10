@@ -142,7 +142,7 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        createGrid(getScreenSize()[0]-150);
+        createGrid(getScreenSize()[0]-120);
         drawGrid();
         refreshStateButtons();
         setupInteractiveCells();
