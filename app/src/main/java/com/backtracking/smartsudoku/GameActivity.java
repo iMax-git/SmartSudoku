@@ -209,10 +209,9 @@ public class GameActivity extends AppCompatActivity {
                 List<Integer> region = grid.getRegion(ImmutableGrid.indexToRegion(id));
 
                 // debug code
-                 System.out.printf("row: %s\n", row);
-                 System.out.printf("col: %s\n", column);
-                 System.out.printf("region: %s\n", region);
-                 System.out.flush();
+                System.out.printf("row: %s\n", row);
+                System.out.printf("col: %s\n", column);
+                System.out.printf("region: %s\n", region);
 
                 GridLayout keyboard = findViewById(R.id.keyboard);
 
