@@ -1,4 +1,8 @@
 
+## avant rendu
+
+- [ ] fichier README
+
 ## GridLayout
 
 - [ ] try to remove one of columncount or rowcount from the XML.

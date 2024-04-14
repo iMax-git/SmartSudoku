@@ -99,6 +99,7 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
         // restore settings
         try {
             SharedPreferences settings = getSharedPreferences("settings", 0);
@@ -122,8 +123,8 @@ public class GameActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
 
         // save settings
         SharedPreferences.Editor settingsEditor = getSharedPreferences("settings",0).edit();
@@ -133,13 +134,19 @@ public class GameActivity extends AppCompatActivity {
         // save game
         SharedPreferences saveStore = getSharedPreferences("save", 0);
         SharedPreferences.Editor saveEditor = saveStore.edit();
-        if (!game.isWon()) {
-            updateGameTime();
-            saveEditor.putString("gameStates", game.serialize());
+        if (game.isWon()) {
+            saveEditor.clear();
         } else {
-            saveEditor.remove("gameStates");
+            saveEditor.putString("gameStates", game.serialize());
         }
         saveEditor.apply();
+    }
+
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        updateGameTime();
         stopTimerUpdater();
     }
 
@@ -167,14 +174,9 @@ public class GameActivity extends AppCompatActivity {
             tv.setText(" ");
             tv.setTextSize(20);
             tv.setGravity(1);
+            tv.setTextColor(Color.BLACK);
+            tv.setBackgroundColor(Color.TRANSPARENT);
 
-            if (DEBUG) {
-                tv.setTextColor(Color.WHITE);
-                tv.setBackgroundColor(Color.BLACK);
-            } else {
-                tv.setTextColor(Color.BLACK);
-                tv.setBackgroundColor(Color.TRANSPARENT);
-            }
             int step = (gridSize / 9)-2;
             tv.setWidth(step);
             tv.setHeight(step);
@@ -388,6 +390,7 @@ public class GameActivity extends AppCompatActivity {
     public void startNewGame(@NonNull final Difficulty difficulty) {
         SudokuGenerator generator = new SudokuGenerator();
         ImmutableGrid solution = generator.getGrid();
+
         switch (difficulty) {
             case EASY:
                 generator.removeNumbers(DEBUG ? 1 : 25); // Si DEBUG est vrai, on ne retire qu'une seule cellule
@@ -417,7 +420,6 @@ public class GameActivity extends AppCompatActivity {
             if (game.isWon()) {
                 System.out.println("Game won!");
                 setGridViewEnabled(false);
-
                 endGame();
             }
             refreshStateButtons();
