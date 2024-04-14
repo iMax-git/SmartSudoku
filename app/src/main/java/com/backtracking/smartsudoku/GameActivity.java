@@ -55,7 +55,7 @@ public class GameActivity extends AppCompatActivity {
 
     private ImageButton btnUndo, btnRedo;
 
-    private final boolean DEBUG = true;
+    private final boolean DEBUG = false;
 
     private final List<TextView> cells = new ArrayList<>();
 
