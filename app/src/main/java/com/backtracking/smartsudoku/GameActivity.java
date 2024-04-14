@@ -53,7 +53,7 @@ public class GameActivity extends AppCompatActivity {
     private LinearLayout view_keyboard;
     private LinearLayout end_menu;
 
-    private ImageButton btnUndo, btnRedo;
+    private ImageButton btnUndo, btnRedo, btnSettings;
 
     private final boolean DEBUG = false;
 
@@ -88,14 +88,19 @@ public class GameActivity extends AppCompatActivity {
         this.btnRedo = findViewById(R.id.btnRedo);
         this.btnUndo = findViewById(R.id.btnUndo);
         this.timerView = findViewById(R.id.timerView);
-        ImageButton btnSettings = findViewById(R.id.btnSettings);
+        this.btnSettings = findViewById(R.id.btnSettings);
         this.setupKeyboard();
         this.updateBackground();
 
-        btnSettings.setOnClickListener(v -> buttonSwitchActivity(SettingsActivity.class));
-
+        // setup win menu animation
         endMenuAnimator = AnimatorInflater.loadAnimator(this, R.animator.end_menu_show_animator);
         endMenuAnimator.setTarget(end_menu);
+
+        // set button callback for launching SettingsActivity
+        this.btnSettings.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        });
     }
 
 
@@ -507,12 +512,6 @@ public class GameActivity extends AppCompatActivity {
         endMenuAnimator.start();
     }
 
-
-
-    private void buttonSwitchActivity(Class<?> activity) {
-        Intent intent = new Intent(this, activity);
-        startActivity(intent);
-    }
 
     private void updateBackground() {
         System.out.println("Updating background");
