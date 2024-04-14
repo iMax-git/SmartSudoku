@@ -1,15 +1,7 @@
 # Smart sudoku
 
-## Description
+Projet de Licence 3 Informatique
 
-## CDC
+par Titoua Diard, Loris Caze et Jan De Rudder
 
-- [ ] 9 région 
-- [ ] 9 case par région
-- [ ] Une région est composé de 1 à 5 chiffre(s) prérempli(s)
-
-## CDC Technique
-
-- [ ] Pour remplir un chiffre dans une case vide, il faut un dialog qui s'ouvre avec les choix possibles qui ne sont pas déjà dans la région.
-- [ ] Possibilité d'effacer un chiffre
-- [ ] Modèle initial aléatoire
+Lancez l'application sur un AVD ou sur votre téléphone, et détendez-vous avec une partie de Smart Sudoku. Choisissez votre fond d'écran préféré et laissez le clavier intelligent vous guider dans la résolution de ce challenge.
