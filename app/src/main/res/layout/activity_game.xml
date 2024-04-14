@@ -152,7 +152,6 @@
         android:visibility="gone"
         android:background="@drawable/end_menu"
         android:gravity="center"
-        android:stateListAnimator="@animator/end_menu_show_animator"
 
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

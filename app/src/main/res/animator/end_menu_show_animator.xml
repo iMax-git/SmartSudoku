@@ -1,16 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item>
-        <!-- Duration: 20 seconds (en ms) -->
-        <objectAnimator
-            android:duration="20000"
-            android:propertyName="translationY"
-            android:valueFrom="10000"
-            android:valueTo="0"
-            android:valueType="floatType" />
-
-    </item>
-
-
-
-</selector>
+<objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:propertyName="translationY"
+    android:valueFrom="1000"
+    android:valueTo="0"
+    android:duration="1000" />

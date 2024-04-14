@@ -5,6 +5,8 @@ import static android.opengl.ETC1.getWidth;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -60,6 +62,7 @@ public class GameActivity extends AppCompatActivity {
     private final List<TextView> cells = new ArrayList<>();
 
     private final Integer[] selectedCell = new Integer[2];
+    private Animator endMenuAnimator;
 
     private Game game;
     private Difficulty difficulty = Difficulty.MEDIUM;
@@ -93,6 +96,9 @@ public class GameActivity extends AppCompatActivity {
         this.updateBackground();
 
         this.btnSettings.setOnClickListener(v -> buttonSwitchActivity(SettingsActivity.class));
+
+        endMenuAnimator = AnimatorInflater.loadAnimator(this, R.animator.end_menu_show_animator);
+        endMenuAnimator.setTarget(end_menu);
     }
 
 
@@ -413,7 +419,6 @@ public class GameActivity extends AppCompatActivity {
             game.setNumber(x, y, value);
             if (game.isWon()) {
                 System.out.println("Game won!");
-                setGridViewEnabled(false);
                 endGame();
             }
             refreshStateButtons();
@@ -498,15 +503,12 @@ public class GameActivity extends AppCompatActivity {
     }
 
     public void endGame() {
-
         Button btnNewGame = findViewById(R.id.btnNewGameEnd);
-        btnNewGame.setOnClickListener(v -> startNewGame(this.gridView));
+        btnNewGame.setOnClickListener(v -> startNewGame(this.difficulty));
         stopTimerUpdater();
-
         this.end_menu.setVisibility(View.VISIBLE);
-
+        endMenuAnimator.start();
     }
-
 
 
 
