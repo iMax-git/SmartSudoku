@@ -1,7 +1,5 @@
 package com.backtracking.smartsudoku;
 
-import static android.opengl.ETC1.getWidth;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -40,6 +38,7 @@ import java.util.Locale;
 
 public class GameActivity extends AppCompatActivity {
 
+    private final boolean DEBUG = false;
     public enum Difficulty {
         EASY, MEDIUM, HARD;
         public static Difficulty fromInt(int i) {
@@ -53,9 +52,7 @@ public class GameActivity extends AppCompatActivity {
     private LinearLayout view_keyboard;
     private LinearLayout end_menu;
 
-    private ImageButton btnUndo, btnRedo, btnSettings;
-
-    private final boolean DEBUG = false;
+    private ImageButton btnUndo, btnRedo;
 
     private final List<TextView> cells = new ArrayList<>();
 
@@ -88,7 +85,7 @@ public class GameActivity extends AppCompatActivity {
         this.btnRedo = findViewById(R.id.btnRedo);
         this.btnUndo = findViewById(R.id.btnUndo);
         this.timerView = findViewById(R.id.timerView);
-        this.btnSettings = findViewById(R.id.btnSettings);
+        ImageButton btnSettings = findViewById(R.id.btnSettings);
         this.setupKeyboard();
         this.updateBackground();
 
@@ -97,7 +94,7 @@ public class GameActivity extends AppCompatActivity {
         endMenuAnimator.setTarget(end_menu);
 
         // set button callback for launching SettingsActivity
-        this.btnSettings.setOnClickListener(v -> {
+        btnSettings.setOnClickListener(v -> {
             Intent intent = new Intent(this, SettingsActivity.class);
             startActivity(intent);
         });
@@ -389,14 +386,14 @@ public class GameActivity extends AppCompatActivity {
     }
 
 
-    public void startNewGame(@NonNull final Difficulty difficulty) {
+    public void startNewGame(@NonNull final Difficulty difficulty)
+    {
         SudokuGenerator generator = new SudokuGenerator();
         ImmutableGrid solution = generator.getGrid();
-
         switch (difficulty) {
             case EASY:
-                generator.removeNumbers(DEBUG ? 1 : 25); // Si DEBUG est vrai, on ne retire qu'une seule cellule
-
+                // if DEBUG mode, remove one cell to enable win condition testing
+                generator.removeNumbers(DEBUG ? 1 : 25);
                 break;
             case MEDIUM:
                 generator.removeNumbers(37);
@@ -405,12 +402,11 @@ public class GameActivity extends AppCompatActivity {
                 generator.removeNumbers(56);
                 break;
         }
-
         this.game = new Game(generator.getGrid(), solution);
         this.difficulty = difficulty;
         drawGrid();
         refreshStateButtons();
-        setupInteractiveCells(); // Réactivation des cellules interactives
+        setupInteractiveCells(); // MàJ des cellules interactives
         setValuesToDefault();
         startTime = LocalDateTime.now();
     }
