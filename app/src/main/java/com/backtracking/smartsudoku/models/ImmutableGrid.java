@@ -48,9 +48,7 @@ public class ImmutableGrid {
         List<Integer> row = new ArrayList<>();
         for (int i=0; i<9; ++i) {
             int number = this.get(i, rowIndex);
-            if (number != 0) {
-                row.add(number);
-            }
+            row.add(number);
         }
         return row;
     }
@@ -60,9 +58,7 @@ public class ImmutableGrid {
         List<Integer> column = new ArrayList<>();
         for (int i=0; i<9; ++i) {
             int number = this.get(colIndex, i);
-            if (number != 0) {
-                column.add(number);
-            }
+            column.add(number);
         }
         return column;
     }
@@ -75,9 +71,7 @@ public class ImmutableGrid {
         for (int i=0; i<3; ++i) {
             for (int j=0; j<3; ++j) {
                 int number = this.get(rx+i, ry+j);
-                if (number != 0) {
-                    region.add(number);
-                }
+                region.add(number);
             }
         }
         return region;
@@ -101,17 +95,6 @@ public class ImmutableGrid {
             cells[i] = (byte) Character.digit(str.charAt(i),10);
         }
         return new ImmutableGrid(cells);
-    }
-
-
-    public List<Integer> getNonZeroIndices() {
-        List<Integer> indices = new ArrayList<>();
-        for (int index=0; index<81; ++index) {
-            if (this.cells[index]>0) {
-                indices.add(index);
-            }
-        }
-        return indices;
     }
 
 

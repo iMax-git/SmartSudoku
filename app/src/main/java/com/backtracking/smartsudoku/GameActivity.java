@@ -212,14 +212,14 @@ public class GameActivity extends AppCompatActivity {
 
                 // setup keyboard numbers
                 ImmutableGrid grid = game.getGrid();
-                List<Integer> row = grid.getRow(y);
-                List<Integer> column = grid.getColumn(x);
-                List<Integer> region = grid.getRegion(ImmutableGrid.indexToRegion(id));
+                List<Integer> playedNumbers = grid.getRow(y);
+                playedNumbers.addAll(grid.getColumn(x));
+                playedNumbers.addAll(grid.getRegion(ImmutableGrid.indexToRegion(id)));
 
                 // debug code
-                System.out.printf("row: %s\n", row);
-                System.out.printf("col: %s\n", column);
-                System.out.printf("region: %s\n", region);
+                if (DEBUG) {
+                    System.out.printf("played numbers: %s\n", playedNumbers);
+                }
 
                 GridLayout keyboard = findViewById(R.id.keyboard);
 
@@ -230,15 +230,9 @@ public class GameActivity extends AppCompatActivity {
                 }
 
                 // disable relevant keyboard buttons
-                for (Integer number : row) {
-                    keyboard.findViewById(number).setEnabled(false);
-                }
-                for (Integer number : column) {
-                    keyboard.findViewById(number).setEnabled(false);
-                }
-                for (Integer number : region) {
-                    keyboard.findViewById(number).setEnabled(false);
-                }
+                playedNumbers.stream()
+                        .filter(number -> number!=0)
+                        .forEach(number -> keyboard.findViewById(number).setEnabled(false));
 
                 this.view_keyboard.setVisibility(View.VISIBLE);
             });
