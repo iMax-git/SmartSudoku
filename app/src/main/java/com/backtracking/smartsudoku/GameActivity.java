@@ -48,16 +48,14 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private LinearLayout rootLayout;
-    private LinearLayout gridContainer;
     private  GridLayout gridView;
-    private ImageButton btnSettings;
 
     private LinearLayout view_keyboard;
     private LinearLayout end_menu;
 
     private ImageButton btnUndo, btnRedo;
 
-    private final boolean DEBUG = false;
+    private final boolean DEBUG = true;
 
     private final List<TextView> cells = new ArrayList<>();
 
@@ -84,18 +82,17 @@ public class GameActivity extends AppCompatActivity {
         setContentView(R.layout.activity_game);
         defineRects();
         this.rootLayout = findViewById(R.id.rootLayout);
-        this.gridContainer = findViewById(R.id.gridContainer);
         this.gridView = findViewById(R.id.gridLayout);
         this.view_keyboard = findViewById(R.id.view_keyboard);
-        this.btnSettings = findViewById(R.id.btnSettings);
         this.end_menu = findViewById(R.id.endGameMenu);
         this.btnRedo = findViewById(R.id.btnRedo);
         this.btnUndo = findViewById(R.id.btnUndo);
         this.timerView = findViewById(R.id.timerView);
+        ImageButton btnSettings = findViewById(R.id.btnSettings);
         this.setupKeyboard();
         this.updateBackground();
 
-        this.btnSettings.setOnClickListener(v -> buttonSwitchActivity(SettingsActivity.class));
+        btnSettings.setOnClickListener(v -> buttonSwitchActivity(SettingsActivity.class));
 
         endMenuAnimator = AnimatorInflater.loadAnimator(this, R.animator.end_menu_show_animator);
         endMenuAnimator.setTarget(end_menu);
