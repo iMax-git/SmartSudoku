@@ -517,9 +517,13 @@ public class GameActivity extends AppCompatActivity {
     private void updateBackground() {
         System.out.println("Updating background");
         // Get background from shared preferences
-        SharedPreferences settings = getSharedPreferences("settings", 0);
-        String backgroundName = settings.getString("background", "");
-        rootLayout.setBackgroundResource(getResources().getIdentifier(backgroundName, "drawable", getPackageName()));
+        try {
+            SharedPreferences settings = getSharedPreferences("settings", 0);
+            String backgroundName = settings.getString("background", "@drawable/fond1");
+            rootLayout.setBackgroundResource(getResources().getIdentifier(backgroundName, "drawable", getPackageName()));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
 

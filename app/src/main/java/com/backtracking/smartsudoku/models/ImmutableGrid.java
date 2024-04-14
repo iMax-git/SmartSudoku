@@ -119,10 +119,8 @@ public class ImmutableGrid {
 
 
     public static int indexToRegion(int index) {
-//        return index%3;
         return (index / 9 / 3) * 3 + (index % 9 / 3);
     }
-    // /untested methods
 
 
     @Override
